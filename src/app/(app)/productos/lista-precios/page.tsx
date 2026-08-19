@@ -6,7 +6,7 @@ import { listarProductos, type Rubro } from "@/lib/productos";
 import { formatearPesosCorto } from "@/lib/money";
 import { hoyISO, formatearFecha } from "@/lib/fechas";
 import { Button } from "@/components/ui/button";
-import { BotonImprimir } from "./boton-imprimir";
+import { BotonImprimir } from "@/components/boton-imprimir";
 
 export const metadata = { title: "Lista de precios" };
 

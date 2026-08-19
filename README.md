@@ -22,6 +22,7 @@ En Supabase, andá a **SQL Editor** → **New query**, y corré los archivos de
 
 1. `0001_usuarios_y_auditoria.sql`
 2. `0002_productos.sql`
+3. `0003_clientes_cuenta_corriente.sql`
 
 Cada archivo se puede correr más de una vez sin romper nada, así que si dudás
 de cuál corriste, corrélos todos de nuevo.
@@ -163,6 +164,10 @@ salva cuando alguien discute un saldo.
 | Cambiar precios | ✅ | ❌ |
 | Imprimir la lista de precios | ✅ | ✅ |
 | Ver la auditoría | ✅ | ❌ |
+| Cargar clientes | ✅ | ✅ |
+| Cargar consumos y pagos | ✅ | ✅ |
+| Ajustar un saldo a mano | ✅ | ❌ |
+| Anular un movimiento | cualquiera | solo los suyos, el mismo día |
 
 Los precios son decisión del dueño. Si querés que los cajeros también puedan
 cargar productos, cambiá `public.es_dueno()` por `public.usuario_activo()` en
@@ -191,7 +196,7 @@ proyecto** y nunca debe ir en una variable `NEXT_PUBLIC_`.
 - [x] 0 · Esqueleto del proyecto
 - [x] 1 · Login, usuarios y roles
 - [x] 2 · Productos y precios (kiosco + ropa)
-- [ ] 3 · Clientes y cuenta corriente
+- [x] 3 · Clientes y cuenta corriente
 - [ ] 4 · Pantalla de carga de venta
 - [ ] 5 · Caja diaria y arqueo
 - [ ] 6 · Aviso de deuda por WhatsApp

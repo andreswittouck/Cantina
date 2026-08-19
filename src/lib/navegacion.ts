@@ -31,13 +31,7 @@ export const NAVEGACION: ItemNav[] = [
     proximamente: true,
     enCelular: true,
   },
-  {
-    href: "/clientes",
-    etiqueta: "Clientes",
-    icono: Users,
-    proximamente: true,
-    enCelular: true,
-  },
+  { href: "/clientes", etiqueta: "Clientes", icono: Users, enCelular: true },
   { href: "/productos", etiqueta: "Productos", icono: Package },
   {
     href: "/caja",
