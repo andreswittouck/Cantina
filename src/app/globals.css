@@ -195,3 +195,25 @@
     padding-bottom: env(safe-area-inset-bottom);
   }
 }
+
+/* Al imprimir (lista de precios, resúmenes de cuenta) desaparece toda la
+   navegación y queda solo el papel. */
+@media print {
+  body {
+    background: #fff;
+  }
+
+  aside,
+  header,
+  nav {
+    display: none !important;
+  }
+
+  main {
+    padding: 0 !important;
+  }
+
+  @page {
+    margin: 14mm;
+  }
+}

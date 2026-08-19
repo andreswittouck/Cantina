@@ -28,7 +28,7 @@ export default async function AppLayout({
 
         <main className="flex-1 px-4 py-5 md:px-6 md:py-7">{children}</main>
 
-        <BarraInferior />
+        <BarraInferior rol={usuario.rol} />
       </div>
     </div>
   );

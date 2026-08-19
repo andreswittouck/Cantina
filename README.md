@@ -17,9 +17,14 @@ botones grandes, y palabras del negocio en vez de palabras de sistema.
 
 ### 2. Crear las tablas
 
-1. En Supabase, andá a **SQL Editor** → **New query**.
-2. Pegá todo el contenido de `supabase/migrations/0001_usuarios_y_auditoria.sql`.
-3. **Run**.
+En Supabase, andá a **SQL Editor** → **New query**, y corré los archivos de
+`supabase/migrations/` **en orden numérico**, uno por uno:
+
+1. `0001_usuarios_y_auditoria.sql`
+2. `0002_productos.sql`
+
+Cada archivo se puede correr más de una vez sin romper nada, así que si dudás
+de cuál corriste, corrélos todos de nuevo.
 
 ### 3. Configurar las variables
 
@@ -149,6 +154,22 @@ salva cuando alguien discute un saldo.
 
 ---
 
+## Quién puede hacer qué
+
+| | Dueño | Cajero |
+| --- | :---: | :---: |
+| Ver productos y precios | ✅ | ✅ |
+| Cargar y editar productos | ✅ | ❌ |
+| Cambiar precios | ✅ | ❌ |
+| Imprimir la lista de precios | ✅ | ✅ |
+| Ver la auditoría | ✅ | ❌ |
+
+Los precios son decisión del dueño. Si querés que los cajeros también puedan
+cargar productos, cambiá `public.es_dueno()` por `public.usuario_activo()` en
+las políticas de `0002_productos.sql` y volvé a correr el archivo.
+
+---
+
 ## Seguridad
 
 Los permisos se chequean en **tres capas**, a propósito:
@@ -169,7 +190,7 @@ proyecto** y nunca debe ir en una variable `NEXT_PUBLIC_`.
 
 - [x] 0 · Esqueleto del proyecto
 - [x] 1 · Login, usuarios y roles
-- [ ] 2 · Productos y precios (kiosco + ropa)
+- [x] 2 · Productos y precios (kiosco + ropa)
 - [ ] 3 · Clientes y cuenta corriente
 - [ ] 4 · Pantalla de carga de venta
 - [ ] 5 · Caja diaria y arqueo

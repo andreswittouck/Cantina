@@ -183,7 +183,21 @@ create policy auditoria_insert on public.auditoria
 -- La auditoría no se edita ni se borra. Ese es todo el punto.
 
 -- ---------------------------------------------------------------------------
--- 8. Listo.
+-- 8. Permisos de tabla (GRANT)
+--    RLS decide QUÉ FILAS ve cada uno, pero primero hay que tener permiso
+--    sobre la tabla. Supabase suele darlos solos con default privileges; los
+--    ponemos explícitos igual para que la base sea reproducible en cualquier
+--    Postgres y para que quede escrito quién puede hacer qué.
+-- ---------------------------------------------------------------------------
+grant usage on schema public to authenticated;
+
+grant select, update            on public.usuarios  to authenticated;
+grant select, insert            on public.auditoria to authenticated;
+
+-- Nadie borra usuarios ni auditoría por API. La baja es lógica (activo=false).
+
+-- ---------------------------------------------------------------------------
+-- 9. Listo.
 --    Siguiente paso: crear el primer usuario desde la app (/registro) o desde
 --    Supabase → Authentication → Users → Add user. Ese primero queda DUEÑO.
 -- ---------------------------------------------------------------------------

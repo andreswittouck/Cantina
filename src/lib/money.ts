@@ -73,7 +73,12 @@ export function parsearPesos(entrada: string): number | null {
   return negativo ? -centavos : centavos;
 }
 
-/** Para inputs controlados: 850050 -> "8500,50" (sin símbolo ni miles) */
+/**
+ * Para cargar en un input: 850050 -> "8500,50", 850000 -> "8500".
+ * Sin símbolo ni separador de miles, y sin el ",00" al pedo cuando es redondo.
+ */
 export function centavosAInput(centavos: number): string {
-  return (centavos / 100).toFixed(2).replace(".", ",");
+  return centavos % 100 === 0
+    ? String(Math.trunc(centavos / 100))
+    : (centavos / 100).toFixed(2).replace(".", ",");
 }

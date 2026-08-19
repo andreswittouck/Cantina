@@ -16,7 +16,7 @@ import { Badge } from "@/components/ui/badge";
 const ETAPAS = [
   { titulo: "Esqueleto del proyecto", listo: true },
   { titulo: "Login, usuarios y roles", listo: true },
-  { titulo: "Productos y precios (kiosco + ropa)", listo: false },
+  { titulo: "Productos y precios (kiosco + ropa)", listo: true },
   { titulo: "Clientes y cuenta corriente", listo: false },
   { titulo: "Pantalla de carga de venta", listo: false },
   { titulo: "Caja diaria y arqueo", listo: false },
