@@ -1,26 +1,157 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
+@custom-variant dark (&:is(.dark *));
+
+/* ---------------------------------------------------------------
+   Paleta del sistema.
+   Neutrales cálidos + verde/teal como color principal.
+   Pensada para pantallas de mostrador: alto contraste, poca saturación
+   en el fondo para que la plata y los saldos resalten.
+   --------------------------------------------------------------- */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --radius: 0.75rem;
+
+  --background: oklch(0.994 0.003 106);
+  --foreground: oklch(0.22 0.012 65);
+
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.22 0.012 65);
+
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.22 0.012 65);
+
+  --primary: oklch(0.5 0.105 176);
+  --primary-foreground: oklch(0.99 0.008 176);
+
+  --secondary: oklch(0.962 0.006 100);
+  --secondary-foreground: oklch(0.28 0.012 65);
+
+  --muted: oklch(0.966 0.005 100);
+  --muted-foreground: oklch(0.52 0.012 70);
+
+  --accent: oklch(0.952 0.024 176);
+  --accent-foreground: oklch(0.34 0.06 176);
+
+  --destructive: oklch(0.577 0.19 27);
+  --destructive-foreground: oklch(0.99 0.008 27);
+
+  --success: oklch(0.6 0.13 150);
+  --success-foreground: oklch(0.99 0.008 150);
+
+  --warning: oklch(0.79 0.14 78);
+  --warning-foreground: oklch(0.28 0.05 78);
+
+  --border: oklch(0.906 0.006 100);
+  --input: oklch(0.906 0.006 100);
+  --ring: oklch(0.5 0.105 176);
+
+  --sidebar: oklch(0.978 0.005 100);
+  --sidebar-foreground: oklch(0.22 0.012 65);
+  --sidebar-border: oklch(0.906 0.006 100);
+}
+
+.dark {
+  --background: oklch(0.185 0.008 70);
+  --foreground: oklch(0.955 0.004 100);
+
+  --card: oklch(0.225 0.008 70);
+  --card-foreground: oklch(0.955 0.004 100);
+
+  --popover: oklch(0.225 0.008 70);
+  --popover-foreground: oklch(0.955 0.004 100);
+
+  --primary: oklch(0.72 0.12 176);
+  --primary-foreground: oklch(0.18 0.03 176);
+
+  --secondary: oklch(0.28 0.008 70);
+  --secondary-foreground: oklch(0.955 0.004 100);
+
+  --muted: oklch(0.28 0.008 70);
+  --muted-foreground: oklch(0.7 0.01 80);
+
+  --accent: oklch(0.32 0.035 176);
+  --accent-foreground: oklch(0.9 0.05 176);
+
+  --destructive: oklch(0.68 0.18 25);
+  --destructive-foreground: oklch(0.16 0.03 25);
+
+  --success: oklch(0.72 0.14 152);
+  --success-foreground: oklch(0.16 0.03 152);
+
+  --warning: oklch(0.83 0.14 80);
+  --warning-foreground: oklch(0.22 0.04 80);
+
+  --border: oklch(0.98 0.004 100 / 12%);
+  --input: oklch(0.98 0.004 100 / 16%);
+  --ring: oklch(0.72 0.12 176);
+
+  --sidebar: oklch(0.21 0.008 70);
+  --sidebar-foreground: oklch(0.955 0.004 100);
+  --sidebar-border: oklch(0.98 0.004 100 / 12%);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    /* Evita el zoom automático de iOS al enfocar un input */
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Los montos siempre en tabular para que las columnas queden alineadas */
+  .tabular {
+    font-variant-numeric: tabular-nums;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  /* Área segura para la barra inferior en celulares con notch */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
 }
