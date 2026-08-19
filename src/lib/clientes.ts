@@ -3,6 +3,7 @@ import "server-only";
 import { crearClienteServidor } from "@/lib/supabase/server";
 
 export type TipoMovimiento = "CONSUMO" | "PAGO" | "AJUSTE";
+export type FormaPago = "EFECTIVO" | "TRANSFERENCIA" | "CUENTA" | "OTRO";
 
 export type Cliente = {
   id: string;
@@ -28,6 +29,7 @@ export type Movimiento = {
   tipo: TipoMovimiento;
   monto: number; // centavos, con signo
   concepto: string | null;
+  forma_pago: FormaPago | null;
   fecha_operacion: string;
   fecha_carga: string;
   usuario_id: string | null;
@@ -129,7 +131,7 @@ export async function listarMovimientos(
   let consulta = supabase
     .from("mov_cuenta")
     .select(
-      "id, cliente_id, tipo, monto, concepto, fecha_operacion, fecha_carga, usuario_id, anulado, motivo_anulacion, usuarios(nombre)",
+      "id, cliente_id, tipo, monto, concepto, forma_pago, fecha_operacion, fecha_carga, usuario_id, anulado, motivo_anulacion, usuarios(nombre)",
     )
     .eq("cliente_id", clienteId)
     .order("fecha_operacion", { ascending: false })

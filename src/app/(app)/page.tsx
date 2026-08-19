@@ -21,7 +21,7 @@ const ETAPAS = [
   { titulo: "Login, usuarios y roles", listo: true },
   { titulo: "Productos y precios (kiosco + ropa)", listo: true },
   { titulo: "Clientes y cuenta corriente", listo: true },
-  { titulo: "Pantalla de carga de venta", listo: false },
+  { titulo: "Pantalla de carga de venta", listo: true },
   { titulo: "Caja diaria y arqueo", listo: false },
   { titulo: "Aviso de deuda por WhatsApp", listo: false },
   { titulo: "Proveedores, compras e insumos", listo: false },
@@ -73,14 +73,16 @@ export default async function PaginaInicio() {
 
       {/* Las dos acciones que se van a usar el 90% del tiempo. */}
       <div className="grid gap-3 sm:grid-cols-2">
-        <Button size="xl" className="justify-start" disabled>
-          <ShoppingCart />
-          <span className="flex flex-col items-start leading-tight">
-            Cargar venta
-            <span className="text-xs font-normal opacity-80">
-              Con productos · próxima etapa
+        <Button asChild size="xl" className="justify-start">
+          <Link href="/ventas/nueva">
+            <ShoppingCart />
+            <span className="flex flex-col items-start leading-tight">
+              Cargar venta
+              <span className="text-xs font-normal opacity-80">
+                Contado o a la cuenta
+              </span>
             </span>
-          </span>
+          </Link>
         </Button>
 
         <Button asChild size="xl" variant="outline" className="justify-start">

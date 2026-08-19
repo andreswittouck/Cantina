@@ -25,10 +25,9 @@ export type ItemNav = {
 export const NAVEGACION: ItemNav[] = [
   { href: "/", etiqueta: "Inicio", icono: House, enCelular: true },
   {
-    href: "/ventas/nueva",
-    etiqueta: "Cargar venta",
+    href: "/ventas",
+    etiqueta: "Ventas",
     icono: ShoppingCart,
-    proximamente: true,
     enCelular: true,
   },
   { href: "/clientes", etiqueta: "Clientes", icono: Users, enCelular: true },

@@ -11,6 +11,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { SelectorFormaPago } from "@/components/selector-forma-pago";
+import { FORMAS_DE_COBRO, type FormaPago } from "@/lib/formas-pago";
 import {
   cargarConsumo,
   registrarPago,
@@ -89,6 +91,7 @@ function Formulario({
 
   const [estado, enviar] = useActionState<EstadoAccion, FormData>(accion, {});
   const [fecha, setFecha] = useState(hoy);
+  const [formaPago, setFormaPago] = useState<FormaPago | null>(null);
 
   useEffect(() => {
     if (estado.ok) {
@@ -174,6 +177,15 @@ function Formulario({
               />
             </div>
           </div>
+
+          {modo === "PAGO" && (
+            <SelectorFormaPago
+              opciones={FORMAS_DE_COBRO}
+              valor={formaPago}
+              alElegir={setFormaPago}
+              permitirVacio
+            />
+          )}
 
           <div className="flex flex-col gap-2">
             <Label htmlFor="fecha_operacion">¿Cuándo fue?</Label>

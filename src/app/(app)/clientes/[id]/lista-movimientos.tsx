@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { formatearPesosCorto } from "@/lib/money";
 import { fechaRelativa } from "@/lib/fechas";
+import { FORMAS_PAGO } from "@/lib/formas-pago";
 import type { Movimiento } from "@/lib/clientes";
 import { anularMovimiento, type EstadoAccion } from "../acciones";
 
@@ -107,11 +108,22 @@ function Fila({ movimiento }: { movimiento: Movimiento }) {
             </span>
           )}
 
-          <span className="text-xs text-muted-foreground">
-            {fechaRelativa(movimiento.fecha_operacion)}
-            {movimiento.usuarios?.nombre
-              ? ` · cargó ${movimiento.usuarios.nombre}`
-              : ""}
+          <span className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
+            {movimiento.forma_pago && (
+              <span className="inline-flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 font-medium">
+                {(() => {
+                  const Icono = FORMAS_PAGO[movimiento.forma_pago].icono;
+                  return <Icono className="size-3" />;
+                })()}
+                {FORMAS_PAGO[movimiento.forma_pago].corto}
+              </span>
+            )}
+            <span>
+              {fechaRelativa(movimiento.fecha_operacion)}
+              {movimiento.usuarios?.nombre
+                ? ` · cargó ${movimiento.usuarios.nombre}`
+                : ""}
+            </span>
           </span>
 
           {anulado && movimiento.motivo_anulacion && (

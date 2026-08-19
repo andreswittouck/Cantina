@@ -23,6 +23,7 @@ En Supabase, andá a **SQL Editor** → **New query**, y corré los archivos de
 1. `0001_usuarios_y_auditoria.sql`
 2. `0002_productos.sql`
 3. `0003_clientes_cuenta_corriente.sql`
+4. `0004_ventas_y_forma_de_pago.sql`
 
 Cada archivo se puede correr más de una vez sin romper nada, así que si dudás
 de cuál corriste, corrélos todos de nuevo.
@@ -153,6 +154,16 @@ todo lo del lunes caería en el miércoles y el cierre de caja nunca cerraría.
 Un movimiento anulado queda registrado con motivo y usuario. Es lo que te
 salva cuando alguien discute un saldo.
 
+**4. El precio se congela en la venta.**
+Cada ítem del ticket guarda el precio y el nombre del producto al momento de
+venderlo. Si mañana sube el precio o renombran el producto, el ticket viejo no
+cambia. Los precios los lee la base al guardar: nunca se toman de lo que manda
+el navegador.
+
+**5. El saldo es un libro de movimientos, no un número guardado.**
+`monto > 0` aumenta la deuda, `monto < 0` la baja. El saldo es `sum(monto)` de
+los no anulados. La pantalla siempre muestra números positivos.
+
 ---
 
 ## Quién puede hacer qué
@@ -168,6 +179,8 @@ salva cuando alguien discute un saldo.
 | Cargar consumos y pagos | ✅ | ✅ |
 | Ajustar un saldo a mano | ✅ | ❌ |
 | Anular un movimiento | cualquiera | solo los suyos, el mismo día |
+| Cargar ventas | ✅ | ✅ |
+| Anular una venta | cualquiera | solo las suyas, el mismo día |
 
 Los precios son decisión del dueño. Si querés que los cajeros también puedan
 cargar productos, cambiá `public.es_dueno()` por `public.usuario_activo()` en
@@ -197,7 +210,7 @@ proyecto** y nunca debe ir en una variable `NEXT_PUBLIC_`.
 - [x] 1 · Login, usuarios y roles
 - [x] 2 · Productos y precios (kiosco + ropa)
 - [x] 3 · Clientes y cuenta corriente
-- [ ] 4 · Pantalla de carga de venta
+- [x] 4 · Pantalla de carga de venta
 - [ ] 5 · Caja diaria y arqueo
 - [ ] 6 · Aviso de deuda por WhatsApp
 - [ ] 7 · Proveedores, compras e insumos

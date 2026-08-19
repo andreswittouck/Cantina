@@ -132,6 +132,11 @@ const esquemaMovimiento = z.object({
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, "Fecha inválida")
     .refine((v) => v <= hoyISO(), "La fecha no puede ser posterior a hoy"),
+  // Opcional a propósito: si el cuaderno no dice cómo pagó, queda vacío.
+  forma_pago: z
+    .enum(["EFECTIVO", "TRANSFERENCIA", "OTRO"])
+    .nullable()
+    .catch(null),
 });
 
 function leerMovimiento(formData: FormData) {
@@ -140,6 +145,7 @@ function leerMovimiento(formData: FormData) {
     monto: String(formData.get("monto") ?? ""),
     concepto: String(formData.get("concepto") ?? ""),
     fecha_operacion: String(formData.get("fecha_operacion") ?? hoyISO()),
+    forma_pago: formData.get("forma_pago") || null,
   });
 }
 
@@ -156,7 +162,8 @@ async function guardarMovimiento(
   const parseo = leerMovimiento(formData);
   if (!parseo.success) return { error: parseo.error.issues[0].message };
 
-  const { cliente_id, monto, concepto, fecha_operacion } = parseo.data;
+  const { cliente_id, monto, concepto, fecha_operacion, forma_pago } =
+    parseo.data;
   const supabase = await crearClienteServidor();
 
   const { error } = await supabase.from("mov_cuenta").insert({
@@ -165,6 +172,8 @@ async function guardarMovimiento(
     monto: tipo === "PAGO" ? -monto : monto,
     concepto,
     fecha_operacion,
+    // Solo tiene sentido en un pago: un consumo a la cuenta no se paga con nada.
+    forma_pago: tipo === "PAGO" ? forma_pago : null,
     usuario_id: usuario.id,
   });
 
