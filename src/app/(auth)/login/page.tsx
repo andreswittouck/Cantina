@@ -20,7 +20,7 @@ export default async function PaginaLogin({
 
       <div className="px-5 text-center text-sm text-muted-foreground">
         ¿Primera vez?{" "}
-        <Link href="/registro" className="font-medium text-primary hover:underline">
+        <Link href="/registro" className="font-medium text-marca-texto hover:underline">
           Crear el usuario dueño
         </Link>
       </div>

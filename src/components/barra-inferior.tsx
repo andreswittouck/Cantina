@@ -27,7 +27,9 @@ export function BarraInferior() {
               onClick={(e) => item.proximamente && e.preventDefault()}
               className={cn(
                 "flex min-h-16 flex-col items-center justify-center gap-1 px-1 py-2 text-[11px] font-medium transition-colors",
-                activo ? "text-primary" : "text-muted-foreground",
+                // Naranja oscurecido: el naranja puro del escudo no se lee
+                // bien como texto chico sobre fondo claro.
+                activo ? "text-marca-texto" : "text-muted-foreground",
                 item.proximamente && "opacity-45",
               )}
             >

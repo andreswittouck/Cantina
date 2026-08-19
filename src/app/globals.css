@@ -3,95 +3,125 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* ---------------------------------------------------------------
-   Paleta del sistema.
-   Neutrales cálidos + verde/teal como color principal.
-   Pensada para pantallas de mostrador: alto contraste, poca saturación
-   en el fondo para que la plata y los saldos resalten.
-   --------------------------------------------------------------- */
+/* ===========================================================================
+   PALETA DEL CLUB — AC RC Rugby
+   ---------------------------------------------------------------------------
+   Naranja del escudo   #EA6A24
+   Negro del escudo     #0D0D0D
+   Blanco               #FFFFFF
+
+   Decisión de contraste (importante, no tocar a la ligera):
+   El naranja del club es claro. Texto BLANCO sobre ese naranja da 3.19:1,
+   que no llega al mínimo legible (4.5:1). Texto NEGRO sobre el mismo naranja
+   da 6.09:1 y además es exactamente la combinación del escudo.
+     → Botones naranjas = texto negro.
+     → Para TEXTO naranja sobre fondo claro (links, montos) se usa una versión
+       más oscura, --marca-texto (#B84A0C, 5.22:1). El naranja puro como texto
+       chico sobre blanco no se lee bien.
+   =========================================================================== */
+
 :root {
   --radius: 0.75rem;
 
-  --background: oklch(0.994 0.003 106);
-  --foreground: oklch(0.22 0.012 65);
+  /* Colores de marca en crudo */
+  --marca: oklch(0.671 0.176 45);          /* #EA6A24 naranja del escudo */
+  --marca-texto: oklch(0.55 0.155 44);     /* #B84A0C para texto sobre claro */
+  --marca-negro: oklch(0.159 0 0);         /* #0D0D0D negro del escudo */
+
+  --background: oklch(0.985 0.004 65);
+  --foreground: oklch(0.2 0.008 55);
 
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.22 0.012 65);
+  --card-foreground: oklch(0.2 0.008 55);
 
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.22 0.012 65);
+  --popover-foreground: oklch(0.2 0.008 55);
 
-  --primary: oklch(0.5 0.105 176);
-  --primary-foreground: oklch(0.99 0.008 176);
+  --primary: oklch(0.671 0.176 45);
+  --primary-foreground: oklch(0.159 0 0);
 
-  --secondary: oklch(0.962 0.006 100);
-  --secondary-foreground: oklch(0.28 0.012 65);
+  --secondary: oklch(0.962 0.005 65);
+  --secondary-foreground: oklch(0.27 0.01 55);
 
-  --muted: oklch(0.966 0.005 100);
-  --muted-foreground: oklch(0.52 0.012 70);
+  --muted: oklch(0.965 0.005 65);
+  --muted-foreground: oklch(0.505 0.014 58);
 
-  --accent: oklch(0.952 0.024 176);
-  --accent-foreground: oklch(0.34 0.06 176);
+  --accent: oklch(0.955 0.03 55);
+  --accent-foreground: oklch(0.44 0.14 44);
 
-  --destructive: oklch(0.577 0.19 27);
-  --destructive-foreground: oklch(0.99 0.008 27);
+  /* Rojo bien separado del naranja en tono, para que "peligro" no se confunda
+     con "acción principal". */
+  --destructive: oklch(0.531 0.197 19);
+  --destructive-foreground: oklch(0.99 0.005 19);
 
-  --success: oklch(0.6 0.13 150);
-  --success-foreground: oklch(0.99 0.008 150);
+  --success: oklch(0.55 0.135 152);
+  --success-foreground: oklch(0.99 0.005 152);
 
-  --warning: oklch(0.79 0.14 78);
-  --warning-foreground: oklch(0.28 0.05 78);
+  /* Amarillo, no ámbar: el ámbar se confundiría con el naranja de marca. */
+  --warning: oklch(0.845 0.145 92);
+  --warning-foreground: oklch(0.3 0.06 80);
 
-  --border: oklch(0.906 0.006 100);
-  --input: oklch(0.906 0.006 100);
-  --ring: oklch(0.5 0.105 176);
+  --border: oklch(0.9 0.006 65);
+  --input: oklch(0.9 0.006 65);
+  --ring: oklch(0.671 0.176 45);
 
-  --sidebar: oklch(0.978 0.005 100);
-  --sidebar-foreground: oklch(0.22 0.012 65);
-  --sidebar-border: oklch(0.906 0.006 100);
+  /* La barra lateral va negra siempre: es la firma visual del club. */
+  --sidebar: oklch(0.159 0 0);
+  --sidebar-foreground: oklch(0.96 0.004 65);
+  --sidebar-muted: oklch(0.72 0.01 65);
+  --sidebar-border: oklch(1 0 0 / 12%);
 }
 
 .dark {
-  --background: oklch(0.185 0.008 70);
-  --foreground: oklch(0.955 0.004 100);
+  --marca: oklch(0.7 0.175 46);
+  --marca-texto: oklch(0.79 0.15 52);
+  --marca-negro: oklch(0.159 0 0);
 
-  --card: oklch(0.225 0.008 70);
-  --card-foreground: oklch(0.955 0.004 100);
+  --background: oklch(0.175 0.005 65);
+  --foreground: oklch(0.955 0.004 65);
 
-  --popover: oklch(0.225 0.008 70);
-  --popover-foreground: oklch(0.955 0.004 100);
+  --card: oklch(0.218 0.006 65);
+  --card-foreground: oklch(0.955 0.004 65);
 
-  --primary: oklch(0.72 0.12 176);
-  --primary-foreground: oklch(0.18 0.03 176);
+  --popover: oklch(0.218 0.006 65);
+  --popover-foreground: oklch(0.955 0.004 65);
 
-  --secondary: oklch(0.28 0.008 70);
-  --secondary-foreground: oklch(0.955 0.004 100);
+  --primary: oklch(0.7 0.175 46);
+  --primary-foreground: oklch(0.16 0.02 46);
 
-  --muted: oklch(0.28 0.008 70);
-  --muted-foreground: oklch(0.7 0.01 80);
+  --secondary: oklch(0.275 0.007 65);
+  --secondary-foreground: oklch(0.955 0.004 65);
 
-  --accent: oklch(0.32 0.035 176);
-  --accent-foreground: oklch(0.9 0.05 176);
+  --muted: oklch(0.275 0.007 65);
+  --muted-foreground: oklch(0.705 0.012 68);
 
-  --destructive: oklch(0.68 0.18 25);
-  --destructive-foreground: oklch(0.16 0.03 25);
+  --accent: oklch(0.31 0.04 48);
+  --accent-foreground: oklch(0.87 0.11 55);
 
-  --success: oklch(0.72 0.14 152);
-  --success-foreground: oklch(0.16 0.03 152);
+  --destructive: oklch(0.65 0.19 20);
+  --destructive-foreground: oklch(0.16 0.03 20);
 
-  --warning: oklch(0.83 0.14 80);
-  --warning-foreground: oklch(0.22 0.04 80);
+  --success: oklch(0.7 0.14 153);
+  --success-foreground: oklch(0.16 0.03 153);
 
-  --border: oklch(0.98 0.004 100 / 12%);
-  --input: oklch(0.98 0.004 100 / 16%);
-  --ring: oklch(0.72 0.12 176);
+  --warning: oklch(0.85 0.145 92);
+  --warning-foreground: oklch(0.24 0.05 85);
 
-  --sidebar: oklch(0.21 0.008 70);
-  --sidebar-foreground: oklch(0.955 0.004 100);
-  --sidebar-border: oklch(0.98 0.004 100 / 12%);
+  --border: oklch(1 0 0 / 13%);
+  --input: oklch(1 0 0 / 17%);
+  --ring: oklch(0.7 0.175 46);
+
+  --sidebar: oklch(0.13 0.003 65);
+  --sidebar-foreground: oklch(0.96 0.004 65);
+  --sidebar-muted: oklch(0.7 0.01 65);
+  --sidebar-border: oklch(1 0 0 / 10%);
 }
 
 @theme inline {
+  --color-marca: var(--marca);
+  --color-marca-texto: var(--marca-texto);
+  --color-marca-negro: var(--marca-negro);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -117,6 +147,7 @@
   --color-ring: var(--ring);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-muted: var(--sidebar-muted);
   --color-sidebar-border: var(--sidebar-border);
 
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
@@ -139,7 +170,6 @@
 
   body {
     @apply bg-background text-foreground font-sans;
-    /* Evita el zoom automático de iOS al enfocar un input */
     -webkit-text-size-adjust: 100%;
   }
 

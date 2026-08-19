@@ -1,4 +1,4 @@
-import { Store } from "lucide-react";
+import { Escudo } from "@/components/escudo";
 
 export default function AuthLayout({
   children,
@@ -6,16 +6,18 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-dvh flex-col items-center justify-center bg-muted/40 px-4 py-10">
+    // `dark` fuerza la paleta oscura solo en esta pantalla: fondo negro del
+    // club, escudo y naranja. Es la cara del sistema.
+    <div className="dark flex min-h-dvh flex-col items-center justify-center bg-marca-negro px-4 py-10">
       <div className="w-full max-w-sm">
-        <div className="mb-8 flex flex-col items-center gap-3 text-center">
-          <div className="flex size-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-sm">
-            <Store className="size-7" />
-          </div>
+        <div className="mb-8 flex flex-col items-center gap-4 text-center">
+          <Escudo className="size-20" />
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight">La Cantina</h1>
-            <p className="text-sm text-muted-foreground">
-              Kiosco, ropa y cuentas corrientes
+            <h1 className="text-2xl font-semibold tracking-tight text-white">
+              La Cantina
+            </h1>
+            <p className="text-sm tracking-wide text-marca uppercase">
+              AC RC Rugby
             </p>
           </div>
         </div>

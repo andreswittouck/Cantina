@@ -24,7 +24,7 @@ export default function PaginaRegistro() {
 
       <div className="px-5 text-center text-sm text-muted-foreground">
         ¿Ya tenés usuario?{" "}
-        <Link href="/login" className="font-medium text-primary hover:underline">
+        <Link href="/login" className="font-medium text-marca-texto hover:underline">
           Entrar
         </Link>
       </div>

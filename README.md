@@ -102,6 +102,32 @@ supabase/
 
 ---
 
+## Colores del club
+
+Todo sale de `src/app/globals.css`. Cambiás ahí y cambia el sistema entero.
+
+| | Valor | Dónde se usa |
+| --- | --- | --- |
+| Naranja del escudo | `#EA6A24` | Botones principales, ítem activo del menú, acentos |
+| Negro del escudo | `#0D0D0D` | Barra lateral, pantalla de login |
+| Naranja para texto | `#B84A0C` | Links y montos sobre fondo claro |
+
+**Por qué hay dos naranjas.** El naranja del club es claro: texto blanco encima
+da 3.19:1 de contraste, y el mínimo legible es 4.5:1. Texto **negro** sobre ese
+mismo naranja da 6.09:1 — y además es la combinación del escudo. Por eso los
+botones naranjas llevan texto negro. Para texto naranja sobre fondo blanco se
+usa la versión oscurecida (`--marca-texto`), que sí llega a 5.22:1.
+
+Dos cosas más, para que "peligro" nunca se confunda con "acción principal":
+el rojo de eliminar es un carmesí (`#C41E3A`), bien separado del naranja en
+tono, y las advertencias usan amarillo en vez de ámbar.
+
+El escudo de `src/components/escudo.tsx` es **provisorio**: una silueta con los
+colores del club. Para poner el real, seguí las instrucciones que están
+comentadas en ese mismo archivo.
+
+---
+
 ## Tres reglas del proyecto
 
 **1. La plata va en centavos, siempre entera.**
