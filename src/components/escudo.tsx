@@ -11,6 +11,9 @@ import { cn } from "@/lib/utils";
  *   <Image src="/escudo.svg" alt="AC RC Rugby" width={40} height={44} />
  *
  * Nada más del sistema depende de esto: todo usa <Escudo />.
+ *
+ * El borde toma `currentColor`, así el mismo componente se ve bien sobre
+ * fondo negro (borde naranja) y sobre fondo naranja (borde negro).
  */
 export function Escudo({ className }: { className?: string }) {
   return (
@@ -23,7 +26,7 @@ export function Escudo({ className }: { className?: string }) {
       <path
         d="M32 2 L60 11 V38 C60 54 47 65 32 70 C17 65 4 54 4 38 V11 Z"
         fill="var(--marca-negro)"
-        stroke="var(--marca)"
+        stroke="currentColor"
         strokeWidth="5"
         strokeLinejoin="round"
       />

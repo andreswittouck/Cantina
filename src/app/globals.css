@@ -65,11 +65,15 @@
   --input: oklch(0.9 0.006 65);
   --ring: oklch(0.671 0.176 45);
 
-  /* La barra lateral va negra siempre: es la firma visual del club. */
-  --sidebar: oklch(0.159 0 0);
-  --sidebar-foreground: oklch(0.96 0.004 65);
-  --sidebar-muted: oklch(0.72 0.01 65);
-  --sidebar-border: oklch(1 0 0 / 12%);
+  /* La barra de navegación va NARANJA: es el color que más usa el club.
+     Texto negro encima (6.09:1). El ítem activo se invierte a negro, igual
+     que el interior del escudo. */
+  --sidebar: oklch(0.671 0.176 45);
+  --sidebar-foreground: oklch(0.159 0 0);
+  --sidebar-muted: oklch(0.159 0 0 / 80%);
+  --sidebar-border: oklch(0.159 0 0 / 16%);
+  --sidebar-activo: oklch(0.159 0 0);
+  --sidebar-activo-foreground: oklch(0.99 0 0);
 }
 
 .dark {
@@ -111,10 +115,14 @@
   --input: oklch(1 0 0 / 17%);
   --ring: oklch(0.7 0.175 46);
 
-  --sidebar: oklch(0.13 0.003 65);
-  --sidebar-foreground: oklch(0.96 0.004 65);
-  --sidebar-muted: oklch(0.7 0.01 65);
-  --sidebar-border: oklch(1 0 0 / 10%);
+  /* De noche el naranja pleno encandila: se baja un punto la luminosidad
+     sin perder el tono de marca. */
+  --sidebar: oklch(0.615 0.168 45);
+  --sidebar-foreground: oklch(0.13 0 0);
+  --sidebar-muted: oklch(0.13 0 0 / 82%);
+  --sidebar-border: oklch(0.13 0 0 / 18%);
+  --sidebar-activo: oklch(0.13 0 0);
+  --sidebar-activo-foreground: oklch(0.99 0 0);
 }
 
 @theme inline {
@@ -149,6 +157,8 @@
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-muted: var(--sidebar-muted);
   --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-activo: var(--sidebar-activo);
+  --color-sidebar-activo-foreground: var(--sidebar-activo-foreground);
 
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;

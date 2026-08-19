@@ -108,9 +108,14 @@ Todo sale de `src/app/globals.css`. Cambiás ahí y cambia el sistema entero.
 
 | | Valor | Dónde se usa |
 | --- | --- | --- |
-| Naranja del escudo | `#EA6A24` | Botones principales, ítem activo del menú, acentos |
-| Negro del escudo | `#0D0D0D` | Barra lateral, pantalla de login |
+| Naranja del escudo | `#EA6A24` | Barra de navegación, botones principales, acentos |
+| Negro del escudo | `#0D0D0D` | Texto sobre naranja, ítem activo del menú |
 | Naranja para texto | `#B84A0C` | Links y montos sobre fondo claro |
+
+**Modo claro y modo oscuro.** Los dos funcionan y se cambian con el botón de
+luna/sol del encabezado. La elección se guarda en el navegador de cada usuario:
+el que atiende de día puede tenerlo en blanco y el que cierra de noche en negro.
+El default es claro (`defaultTheme` en `src/components/proveedor-tema.tsx`).
 
 **Por qué hay dos naranjas.** El naranja del club es claro: texto blanco encima
 da 3.19:1 de contraste, y el mínimo legible es 4.5:1. Texto **negro** sobre ese

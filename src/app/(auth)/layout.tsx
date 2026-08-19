@@ -1,4 +1,5 @@
 import { Escudo } from "@/components/escudo";
+import { SelectorTema } from "@/components/selector-tema";
 
 export default function AuthLayout({
   children,
@@ -6,17 +7,18 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    // `dark` fuerza la paleta oscura solo en esta pantalla: fondo negro del
-    // club, escudo y naranja. Es la cara del sistema.
-    <div className="dark flex min-h-dvh flex-col items-center justify-center bg-marca-negro px-4 py-10">
+    <div className="relative flex min-h-dvh flex-col items-center justify-center bg-background px-4 py-10">
+      <div className="absolute top-4 right-4">
+        <SelectorTema />
+      </div>
+
       <div className="w-full max-w-sm">
         <div className="mb-8 flex flex-col items-center gap-4 text-center">
-          <Escudo className="size-20" />
+          {/* Sobre fondo claro u oscuro, el borde naranja siempre resalta */}
+          <Escudo className="size-20 text-marca" />
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight text-white">
-              La Cantina
-            </h1>
-            <p className="text-sm tracking-wide text-marca uppercase">
+            <h1 className="text-2xl font-bold tracking-tight">La Cantina</h1>
+            <p className="text-sm font-medium tracking-wide text-marca-texto uppercase">
               AC RC Rugby
             </p>
           </div>
