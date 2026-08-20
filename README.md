@@ -24,6 +24,7 @@ En Supabase, andá a **SQL Editor** → **New query**, y corré los archivos de
 2. `0002_productos.sql`
 3. `0003_clientes_cuenta_corriente.sql`
 4. `0004_ventas_y_forma_de_pago.sql`
+5. `0005_caja_y_arqueo.sql`
 
 Cada archivo se puede correr más de una vez sin romper nada, así que si dudás
 de cuál corriste, corrélos todos de nuevo.
@@ -181,10 +182,35 @@ los no anulados. La pantalla siempre muestra números positivos.
 | Anular un movimiento | cualquiera | solo los suyos, el mismo día |
 | Cargar ventas | ✅ | ✅ |
 | Anular una venta | cualquiera | solo las suyas, el mismo día |
+| Abrir y cerrar la caja | ✅ | ✅ |
+| Reabrir una caja cerrada | ✅ | ❌ |
 
 Los precios son decisión del dueño. Si querés que los cajeros también puedan
 cargar productos, cambiá `public.es_dueno()` por `public.usuario_activo()` en
 las políticas de `0002_productos.sql` y volvé a correr el archivo.
+
+---
+
+## Qué cuenta la caja y qué no
+
+La caja es la **plata física** que hay en el cajón:
+
+| | ¿Entra a la caja? |
+| --- | --- |
+| Venta en efectivo | Sí |
+| Cobro de deuda en efectivo | Sí |
+| Transferencia (venta o cobro) | No: entró al banco |
+| Venta fiada | No: todavía no entró nada |
+| Pago sin forma de pago anotada | **No**, y se avisa aparte |
+
+Lo último es a propósito: adivinar haría que el arqueo mienta, que es
+justamente lo que hay que evitar. La pantalla muestra cuánto quedó sin
+clasificar para que se pueda corregir.
+
+Al cerrar, el `monto_sistema` queda **congelado**. Si después alguien carga una
+venta con esa fecha, el arqueo que se hizo ese día sigue siendo el que se hizo,
+y la pantalla avisa que el cálculo de hoy ya no coincide. Solo el dueño puede
+reabrir una caja para volver a contar.
 
 ---
 
@@ -211,7 +237,7 @@ proyecto** y nunca debe ir en una variable `NEXT_PUBLIC_`.
 - [x] 2 · Productos y precios (kiosco + ropa)
 - [x] 3 · Clientes y cuenta corriente
 - [x] 4 · Pantalla de carga de venta
-- [ ] 5 · Caja diaria y arqueo
+- [x] 5 · Caja diaria y arqueo
 - [ ] 6 · Aviso de deuda por WhatsApp
 - [ ] 7 · Proveedores, compras e insumos
 - [ ] 8 · Reportes, backup y PWA

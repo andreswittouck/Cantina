@@ -34,17 +34,29 @@ export function formatearFechaLarga(iso: string): string {
   return format(parseISO(iso), "EEEE d 'de' MMMM", { locale: es });
 }
 
-/** Para timestamps completos: "19/08/2026 15:42" */
+/**
+ * Para timestamps completos: "19/08/2026 15:42".
+ *
+ * `hour12: false` va explícito: sin eso, Node y el navegador pueden elegir
+ * distinto (24 h contra "3:42 p. m.") y React tira error de hidratación.
+ */
 export function formatearFechaHora(fecha: Date | string): string {
   const d = typeof fecha === "string" ? parseISO(fecha) : fecha;
-  return new Intl.DateTimeFormat("es-AR", {
+
+  const partes = new Intl.DateTimeFormat("es-AR", {
     timeZone: ZONA,
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
     hour: "2-digit",
     minute: "2-digit",
-  }).format(d);
+    hour12: false,
+  }).formatToParts(d);
+
+  const buscar = (tipo: Intl.DateTimeFormatPartTypes) =>
+    partes.find((p) => p.type === tipo)?.value ?? "";
+
+  return `${buscar("day")}/${buscar("month")}/${buscar("year")} ${buscar("hour")}:${buscar("minute")}`;
 }
 
 /** "hoy", "ayer" o la fecha, para mostrar en listas. */

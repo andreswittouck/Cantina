@@ -9,30 +9,39 @@
  * y formatear solo al momento de mostrar en pantalla.
  */
 
-const formateador = new Intl.NumberFormat("es-AR", {
-  style: "currency",
-  currency: "ARS",
+/**
+ * Se formatea el NÚMERO y el "$" se agrega a mano, en vez de usar
+ * `style: "currency"`.
+ *
+ * Motivo: el separador que Intl mete entre el símbolo y el número cambia según
+ * la versión de ICU. Node y el navegador pueden no coincidir, y eso rompe la
+ * hidratación de React ("el servidor renderizó un texto distinto al cliente").
+ * El formato del número en sí (miles y decimales) sí es estable.
+ */
+const conDecimales = new Intl.NumberFormat("es-AR", {
   minimumFractionDigits: 2,
   maximumFractionDigits: 2,
 });
 
-const formateadorCorto = new Intl.NumberFormat("es-AR", {
-  style: "currency",
-  currency: "ARS",
+const sinDecimales = new Intl.NumberFormat("es-AR", {
   minimumFractionDigits: 0,
   maximumFractionDigits: 0,
 });
 
 /** 850050 -> "$ 8.500,50" */
 export function formatearPesos(centavos: number): string {
-  return formateador.format(centavos / 100);
+  const signo = centavos < 0 ? "-" : "";
+  return `${signo}$ ${conDecimales.format(Math.abs(centavos) / 100)}`;
 }
 
 /** 850000 -> "$ 8.500"  ·  850050 -> "$ 8.500,50" (oculta los centavos si son 00) */
 export function formatearPesosCorto(centavos: number): string {
-  return centavos % 100 === 0
-    ? formateadorCorto.format(centavos / 100)
-    : formateador.format(centavos / 100);
+  const signo = centavos < 0 ? "-" : "";
+  const valor = Math.abs(centavos);
+
+  return valor % 100 === 0
+    ? `${signo}$ ${sinDecimales.format(valor / 100)}`
+    : `${signo}$ ${conDecimales.format(valor / 100)}`;
 }
 
 /**

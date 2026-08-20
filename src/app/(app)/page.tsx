@@ -11,6 +11,8 @@ import {
 
 import { exigirUsuario } from "@/lib/auth";
 import { resumenDeuda } from "@/lib/clientes";
+import { obtenerCajaPorFecha, obtenerResumen } from "@/lib/caja";
+import { hoyISO } from "@/lib/fechas";
 import { formatearPesosCorto } from "@/lib/money";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,7 +24,7 @@ const ETAPAS = [
   { titulo: "Productos y precios (kiosco + ropa)", listo: true },
   { titulo: "Clientes y cuenta corriente", listo: true },
   { titulo: "Pantalla de carga de venta", listo: true },
-  { titulo: "Caja diaria y arqueo", listo: false },
+  { titulo: "Caja diaria y arqueo", listo: true },
   { titulo: "Aviso de deuda por WhatsApp", listo: false },
   { titulo: "Proveedores, compras e insumos", listo: false },
 ];
@@ -58,7 +60,13 @@ function Indicador({
 
 export default async function PaginaInicio() {
   const usuario = await exigirUsuario();
-  const deuda = await resumenDeuda();
+  const hoy = hoyISO();
+
+  const [deuda, caja, resumen] = await Promise.all([
+    resumenDeuda(),
+    obtenerCajaPorFecha(hoy),
+    obtenerResumen(hoy),
+  ]);
 
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-6">
@@ -101,9 +109,18 @@ export default async function PaginaInicio() {
       <div className="grid gap-3 sm:grid-cols-3">
         <Indicador
           etiqueta="Caja de hoy"
-          valor="—"
-          ayuda="Se activa en la etapa 5"
+          valor={
+            caja ? formatearPesosCorto(resumen.esperado_efectivo) : "Sin abrir"
+          }
+          ayuda={
+            !caja
+              ? "Abrir la caja del día"
+              : caja.estado === "CERRADA"
+                ? "Ya está cerrada"
+                : "En efectivo, sin contar"
+          }
           icono={Wallet}
+          href="/caja"
         />
         <Indicador
           etiqueta="Total adeudado"

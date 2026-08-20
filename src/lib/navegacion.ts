@@ -32,13 +32,7 @@ export const NAVEGACION: ItemNav[] = [
   },
   { href: "/clientes", etiqueta: "Clientes", icono: Users, enCelular: true },
   { href: "/productos", etiqueta: "Productos", icono: Package },
-  {
-    href: "/caja",
-    etiqueta: "Caja",
-    icono: Wallet,
-    proximamente: true,
-    enCelular: true,
-  },
+  { href: "/caja", etiqueta: "Caja", icono: Wallet, enCelular: true },
   {
     href: "/proveedores",
     etiqueta: "Proveedores",
