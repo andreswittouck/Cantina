@@ -29,6 +29,10 @@ En Supabase, andá a **SQL Editor** → **New query**, y corré los archivos de
 Cada archivo se puede correr más de una vez sin romper nada, así que si dudás
 de cuál corriste, corrélos todos de nuevo.
 
+Para probar sin ensuciar nada hay dos archivos más, que **no** son migraciones:
+`datos-de-prueba.sql` carga productos y clientes inventados, y
+`borrar-datos-de-prueba.sql` deja la base limpia después.
+
 ### 3. Configurar las variables
 
 ```bash
@@ -60,6 +64,15 @@ todos los permisos. Los que vengan después entran como cajeros.
 > abierto** en Supabase → *Authentication* → *Sign In / Providers* →
 > desactivar *Allow new users to sign up*. A partir de ahí, los usuarios los
 > da de alta el dueño.
+
+---
+
+## Puesta en marcha
+
+Para pasar de "lo tengo en la compu" a "lo están usando en el club", seguí
+[`PUESTA-EN-MARCHA.md`](PUESTA-EN-MARCHA.md): tiene la lista de qué probar,
+cómo publicarlo, en qué orden cargar los datos reales y dos advertencias
+sobre los planes gratuitos.
 
 ---
 
