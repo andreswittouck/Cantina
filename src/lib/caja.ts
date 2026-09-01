@@ -83,7 +83,7 @@ export async function listarMovCaja(cajaId: string): Promise<MovCaja[]> {
   const { data } = await supabase
     .from("mov_caja")
     .select(
-      "id, tipo, monto, concepto, creado_en, anulado, motivo_anulacion, usuarios(nombre)",
+      "id, tipo, monto, concepto, creado_en, anulado, motivo_anulacion, usuarios!mov_caja_usuario_id_fkey(nombre)",
     )
     .eq("caja_id", cajaId)
     .order("creado_en", { ascending: false });

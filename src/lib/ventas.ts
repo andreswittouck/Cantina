@@ -32,7 +32,7 @@ export type Venta = {
 export type VentaConItems = Venta & { venta_items: VentaItem[] };
 
 const CAMPOS =
-  "id, numero, cliente_id, fecha_operacion, fecha_carga, forma_pago, total, observacion, anulada, motivo_anulacion, clientes(nombre, apellido, alias), usuarios(nombre)";
+  "id, numero, cliente_id, fecha_operacion, fecha_carga, forma_pago, total, observacion, anulada, motivo_anulacion, clientes(nombre, apellido, alias), usuarios!ventas_usuario_id_fkey(nombre)";
 
 export async function listarVentas({
   desde,

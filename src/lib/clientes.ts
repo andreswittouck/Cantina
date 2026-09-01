@@ -131,7 +131,7 @@ export async function listarMovimientos(
   let consulta = supabase
     .from("mov_cuenta")
     .select(
-      "id, cliente_id, tipo, monto, concepto, forma_pago, fecha_operacion, fecha_carga, usuario_id, anulado, motivo_anulacion, usuarios(nombre)",
+      "id, cliente_id, tipo, monto, concepto, forma_pago, fecha_operacion, fecha_carga, usuario_id, anulado, motivo_anulacion, usuarios!mov_cuenta_usuario_id_fkey(nombre)",
     )
     .eq("cliente_id", clienteId)
     .order("fecha_operacion", { ascending: false })
