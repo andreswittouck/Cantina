@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { exigirUsuario } from "@/lib/auth";
 import { listarProductos } from "@/lib/productos";
+import { ordenarPorTalle } from "@/lib/talles";
 import { listarClientes, nombreCompleto } from "@/lib/clientes";
 import { hoyISO } from "@/lib/fechas";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -36,14 +37,15 @@ export default async function PaginaNuevaVenta() {
             nombre: p.nombre,
             rubro: p.rubro,
             precio_venta: p.precio_venta,
-            variantes: (p.variantes ?? [])
-              .filter((v) => v.activo)
-              .map((v) => ({
-                id: v.id,
-                talle: v.talle,
-                color: v.color,
-                stock: v.stock,
-              })),
+            // Los botones de talle en orden: S, M, L… y no L, M, S.
+            variantes: ordenarPorTalle(
+              (p.variantes ?? []).filter((v) => v.activo),
+            ).map((v) => ({
+              id: v.id,
+              talle: v.talle,
+              color: v.color,
+              stock: v.stock,
+            })),
           }))}
           clientes={clientes.map((c) => ({
             id: c.id,

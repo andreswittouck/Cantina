@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { Plus, Search, Printer, Package, Shirt, Pencil } from "lucide-react";
+import { Plus, Search, Printer, Package, Shirt, Pencil, Grid3x3 } from "lucide-react";
 
 import { exigirUsuario } from "@/lib/auth";
+import { esDueno as mandaAca } from "@/lib/roles";
 import {
   listarProductos,
   stockTotal,
@@ -97,7 +98,8 @@ export default async function PaginaProductos({
     incluirInactivos,
   });
 
-  const esDueno = usuario.rol === "DUENO";
+  // Dueño o admin: los dos cargan y cambian precios.
+  const esDueno = mandaAca(usuario.rol);
   const hayFiltro = Boolean(params.q) || rubro !== "TODOS" || incluirInactivos;
 
   return (
@@ -113,6 +115,14 @@ export default async function PaginaProductos({
         </div>
 
         <div className="flex gap-2">
+          <Button asChild variant="outline">
+            <Link href="/productos/stock">
+              <Grid3x3 />
+              <span className="hidden sm:inline">Stock de ropa</span>
+              <span className="sm:hidden">Stock</span>
+            </Link>
+          </Button>
+
           <Button asChild variant="outline">
             <Link href="/productos/lista-precios">
               <Printer />
@@ -232,7 +242,7 @@ export default async function PaginaProductos({
                 <span className="flex min-w-0 flex-1 flex-col">
                   <span className="truncate font-medium">{p.nombre}</span>
                   <span className="text-xs text-muted-foreground">
-                    {p.rubro === "ROPA" ? "Ropa" : "Kiosco"}
+                    {p.rubro === "ROPA" ? p.tipo_prenda ?? "Ropa" : "Kiosco"}
                     {p.controla_stock ? ` · ${stockTotal(p)} en stock` : ""}
                     {!p.activo ? " · no se vende" : ""}
                   </span>
@@ -275,6 +285,11 @@ export default async function PaginaProductos({
                       <Badge variant={p.rubro === "ROPA" ? "default" : "secondary"}>
                         {p.rubro === "ROPA" ? "Ropa" : "Kiosco"}
                       </Badge>
+                      {p.tipo_prenda && (
+                        <span className="ml-2 text-sm text-muted-foreground">
+                          {p.tipo_prenda}
+                        </span>
+                      )}
                     </TableCell>
 
                     <TableCell className="tabular text-right font-semibold">

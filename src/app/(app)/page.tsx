@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 
 import { exigirUsuario } from "@/lib/auth";
+import { ROLES, esAdmin } from "@/lib/roles";
 import { resumenDeuda } from "@/lib/clientes";
 import { obtenerCajaPorFecha, obtenerResumen } from "@/lib/caja";
 import { hoyISO } from "@/lib/fechas";
@@ -27,6 +28,7 @@ const ETAPAS = [
   { titulo: "Caja diaria y arqueo", listo: true },
   { titulo: "Aviso de deuda por WhatsApp", listo: false },
   { titulo: "Proveedores, compras e insumos", listo: false },
+  { titulo: "Reportes, backup y app instalable", listo: false },
 ];
 
 function Indicador({
@@ -75,7 +77,7 @@ export default async function PaginaInicio() {
           Hola, {usuario.nombre.split(" ")[0]}
         </h1>
         <p className="text-sm text-muted-foreground">
-          Entraste como {usuario.rol === "DUENO" ? "dueño" : "cajero"}.
+          Entraste como {ROLES[usuario.rol].etiqueta.toLowerCase()}.
         </p>
       </div>
 
@@ -140,36 +142,40 @@ export default async function PaginaInicio() {
         />
       </div>
 
-      <Card>
-        <CardHeader className="flex-row items-center justify-between gap-3">
-          <CardTitle>Cómo viene el sistema</CardTitle>
-          <Badge variant="secondary">
-            {ETAPAS.filter((e) => e.listo).length} de {ETAPAS.length}
-          </Badge>
-        </CardHeader>
+      {/* El plan de obra es cosa del que construye. Al que atiende la cantina
+          mostrarle lo que falta solo lo distrae de lo que sí puede hacer. */}
+      {esAdmin(usuario.rol) && (
+        <Card>
+          <CardHeader className="flex-row items-center justify-between gap-3">
+            <CardTitle>Cómo viene el sistema</CardTitle>
+            <Badge variant="secondary">
+              {ETAPAS.filter((e) => e.listo).length} de {ETAPAS.length}
+            </Badge>
+          </CardHeader>
 
-        <CardContent>
-          <ol className="flex flex-col gap-0.5">
-            {ETAPAS.map((etapa) => (
-              <li
-                key={etapa.titulo}
-                className="flex items-center gap-3 rounded-lg px-1 py-2 text-sm"
-              >
-                {etapa.listo ? (
-                  <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-success text-success-foreground">
-                    <Check className="size-3.5" strokeWidth={3} />
+          <CardContent>
+            <ol className="flex flex-col gap-0.5">
+              {ETAPAS.map((etapa) => (
+                <li
+                  key={etapa.titulo}
+                  className="flex items-center gap-3 rounded-lg px-1 py-2 text-sm"
+                >
+                  {etapa.listo ? (
+                    <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-success text-success-foreground">
+                      <Check className="size-3.5" strokeWidth={3} />
+                    </span>
+                  ) : (
+                    <Circle className="size-5 shrink-0 text-muted-foreground/35" />
+                  )}
+                  <span className={etapa.listo ? "" : "text-muted-foreground"}>
+                    {etapa.titulo}
                   </span>
-                ) : (
-                  <Circle className="size-5 shrink-0 text-muted-foreground/35" />
-                )}
-                <span className={etapa.listo ? "" : "text-muted-foreground"}>
-                  {etapa.titulo}
-                </span>
-              </li>
-            ))}
-          </ol>
-        </CardContent>
-      </Card>
+                </li>
+              ))}
+            </ol>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

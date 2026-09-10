@@ -9,14 +9,15 @@ Guía para pasar de "lo tengo en la compu" a "lo están usando en el club".
 **1. Supabase.** Creá el proyecto y corré las migraciones en orden — está todo
 en el README, sección *Cómo arrancarlo*.
 
-**2. Datos de prueba.** Entrá a `/registro` y creá tu usuario (queda dueño).
+**2. Datos de prueba.** Entrá a `/registro` y creá tu usuario (queda
+administrador; después esa pantalla se cierra sola).
 Después, en el SQL Editor de Supabase, corré:
 
 ```
 supabase/datos-de-prueba.sql
 ```
 
-Te deja 13 productos, 7 talles y 6 clientes inventados para jugar.
+Te deja 15 productos, 15 talles y 6 clientes inventados para jugar.
 
 **3. Recorré el circuito de un día entero.** Esta es la parte que importa:
 
@@ -25,6 +26,7 @@ Te deja 13 productos, 7 talles y 6 clientes inventados para jugar.
 - [ ] Cargá una venta por transferencia
 - [ ] Cargá una venta fiada a un cliente → mirá que le suba la deuda
 - [ ] Vendé ropa eligiendo un talle → mirá que baje el stock de ese talle
+- [ ] Abrí Productos → Stock de ropa → mirá la grilla por tipo y talle, e imprimila
 - [ ] Registrá un pago de ese cliente, marcando efectivo
 - [ ] Registrá otro pago **sin** marcar forma de pago → mirá el aviso en la caja
 - [ ] Sacá plata de la caja para un gasto
@@ -36,9 +38,13 @@ Te deja 13 productos, 7 talles y 6 clientes inventados para jugar.
 **4. Probalo desde el celular.** Abrí `http://TU-IP-LOCAL:3000` desde el
 teléfono estando en la misma red. Es como lo van a usar la mitad del tiempo.
 
-**5. Probalo como cajero.** Creá un segundo usuario, entrá con ese y verificá
-que no pueda cambiar precios ni ver la auditoría. Es la mejor forma de
-confirmar que los permisos están donde tienen que estar.
+**5. Probalo como cajero.** Desde **Usuarios → Nuevo**, creá un segundo
+usuario con rol cajero, entrá con ese y verificá que no pueda cambiar precios,
+ni ver la auditoría, ni entrar a Usuarios. Es la mejor forma de confirmar que
+los permisos están donde tienen que estar.
+
+Probá también el otro lado: entrá como dueño y fijate que en el alta **no**
+aparezca la opción de administrador.
 
 **6. Dejá la base limpia.** Cuando termines de probar:
 
@@ -52,14 +58,32 @@ Borra todo lo transaccional pero **no** los usuarios.
 
 ## Parte 2 · Publicarlo (20 minutos)
 
-1. Subí el repo a GitHub.
-2. En Vercel: **Add New… → Project** → importá el repo.
-3. Cargá las dos variables de entorno (`NEXT_PUBLIC_SUPABASE_URL` y
-   `NEXT_PUBLIC_SUPABASE_ANON_KEY`).
-4. **Deploy**. Cada `git push` a `main` republica solo.
-5. **Apagá el registro abierto**: Supabase → *Authentication* → *Sign In /
-   Providers* → desactivar *Allow new users to sign up*. Desde ahí, los
-   usuarios los das de alta vos desde el panel de Supabase.
+Se publica en **Netlify**, plan gratis (ver parte 4 por qué no Vercel).
+
+1. **Base al día.** En Supabase → *SQL Editor*, pegá entero
+   `supabase/aplicar-todas-las-migraciones.sql` y corrélo. Se puede correr
+   aunque ya hayas corrido algunas: lo que ya está, lo saltea.
+2. **Subí el repo a GitHub** (`git push`).
+3. **Netlify:** [app.netlify.com](https://app.netlify.com) → *Add new project*
+   → *Import an existing project* → GitHub → elegí el repo. Netlify detecta
+   Next.js solo; no toques el comando de build.
+4. **Variables de entorno** (en el mismo paso, o después en *Project
+   configuration → Environment variables*):
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `SUPABASE_SERVICE_ROLE_KEY` — secreta, sin el prefijo `NEXT_PUBLIC_`.
+     Sale de Supabase → *Project Settings → API Keys* (la `service_role` o
+     `secret`). Sin esta, el alta de usuarios no anda.
+5. **Deploy.** Cada `git push` a `main` republica solo.
+6. **Supabase → Authentication → URL Configuration**: en *Site URL* poné la
+   dirección que te dio Netlify (algo como `https://la-cantina.netlify.app`).
+7. **Apagá el registro abierto**: Supabase → *Authentication* → *Sign In /
+   Providers* → desactivar *Allow new users to sign up*. La base ya lo
+   rechaza sola, pero es una traba menos que depender de una sola capa.
+   Hacelo **después** de crear tu usuario si todavía no tenés ninguno.
+8. **Si ya tenías un usuario DUEÑO** de antes de la 0006 y querés ser admin,
+   corré una vez en el SQL Editor (con tu email):
+   `update public.usuarios set rol = 'ADMIN' where email = 'vos@ejemplo.com';`
 
 ---
 
@@ -67,8 +91,9 @@ Borra todo lo transaccional pero **no** los usuarios.
 
 En este orden:
 
-1. **Usuarios** — uno por persona que lo vaya a usar. Cada uno con su cuenta:
-   así la auditoría sirve para algo y se sabe quién cargó qué.
+1. **Usuarios** — desde *Usuarios → Nuevo*, uno por persona que lo vaya a
+   usar, cada uno con su rol. Cada uno con su cuenta: así la auditoría sirve
+   para algo y se sabe quién cargó qué. La contraseña se la das en la mano.
 2. **Productos** — empezá por los 15 o 20 que más venden. El resto se agrega
    sobre la marcha, cargarlos todos de una es perder una tarde.
 3. **Clientes** — con el apodo cargado. Es por donde los van a buscar.
@@ -76,7 +101,9 @@ En este orden:
    cargá un solo movimiento con el saldo actual, fecha del día que arrancan y
    concepto "Saldo del cuaderno al ...". No hace falta pasar la historia
    entera: el sistema arranca desde ese número.
-5. **Stock de ropa** — contá lo que hay y cargalo por talle.
+5. **Stock de ropa** — a cada prenda ponele el tipo (Camiseta, Short…), agregá
+   los talles con los botones de curvas y cargá lo que contaste. Después
+   Productos → Stock de ropa te muestra todo junto y se puede imprimir.
 
 ---
 
@@ -92,23 +119,17 @@ Avisa por mail una semana antes.
 - Con que la usen unos pocos días por semana, no se pausa nunca.
 - Si el club para en el receso, puede pasar. Se reactiva en un minuto.
 
-### El plan gratuito de Vercel es solo para uso no comercial
+### Por qué Netlify y no Vercel
 
 Los términos de Vercel dicen que el plan **Hobby** es para uso personal no
 comercial, y definen "comercial" de forma amplia: cualquier deploy usado para
-el beneficio económico de alguien involucrado.
+el beneficio económico de alguien involucrado. Un sistema de caja de la
+cantina queda en zona gris.
 
-Un sistema interno de administración de un club no es un sitio que cobre a sus
-visitantes ni que muestre publicidad, así que probablemente esté fuera de esa
-definición — pero la redacción es lo bastante amplia como para que valga la
-pena resolverlo antes que después. Tres caminos:
-
-1. **Preguntarles.** Vercel invita a consultar los casos dudosos por soporte.
-   Un mail y queda por escrito.
-2. **Usar otro hosting gratuito** que no tenga esa restricción (Netlify o
-   Cloudflare). El proyecto es un Next.js estándar: mover el deploy es
-   cuestión de conectar el mismo repo.
-3. **Pagar Vercel Pro** (~USD 20/mes). Rompe el "costo cero".
+El plan gratis de **Netlify** sí permite uso comercial y soporta Next.js 16
+sin configuración (proxy, Server Actions y `next/image` incluidos). Por eso se
+publica ahí. Si algún día se pasan de los límites del plan gratis, Netlify
+avisa; con el uso de una cantina no debería pasar.
 
 Nada de esto afecta a Supabase, que no tiene esa restricción.
 

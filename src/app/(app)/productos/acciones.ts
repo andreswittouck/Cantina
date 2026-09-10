@@ -7,8 +7,9 @@ import { z } from "zod";
 import { exigirDueno, registrarAuditoria } from "@/lib/auth";
 import { crearClienteServidor } from "@/lib/supabase/server";
 import { parsearPesos } from "@/lib/money";
+import { CURVAS_TALLES, normalizarTipoPrenda } from "@/lib/talles";
 
-export type EstadoProducto = { error?: string; campo?: string };
+export type EstadoProducto = { error?: string; campo?: string; aviso?: string };
 
 /** Texto de plata -> centavos. Zod se encarga del resto. */
 const pesos = z
@@ -22,27 +23,41 @@ const pesosOpcional = z
   .transform((v) => (v.trim() === "" ? null : parsearPesos(v)))
   .refine((v) => v === null || (v !== null && v >= 0), "Importe inválido");
 
-const esquemaProducto = z.object({
-  nombre: z.string().trim().min(2, "El nombre necesita al menos 2 letras"),
-  codigo: z
-    .string()
-    .trim()
-    .transform((v) => (v === "" ? null : v)),
-  rubro: z.enum(["KIOSCO", "ROPA"], { message: "Elegí kiosco o ropa" }),
-  precio_venta: pesos,
-  costo: pesosOpcional,
-  stock_minimo: z
-    .string()
-    .transform((v) => (v.trim() === "" ? 0 : Number(v)))
-    .refine((v) => Number.isInteger(v) && v >= 0, "El stock mínimo no es válido"),
-  activo: z.string().optional(),
-});
+const esquemaProducto = z
+  .object({
+    nombre: z.string().trim().min(2, "El nombre necesita al menos 2 letras"),
+    codigo: z
+      .string()
+      .trim()
+      .transform((v) => (v === "" ? null : v)),
+    rubro: z.enum(["KIOSCO", "ROPA"], { message: "Elegí kiosco o ropa" }),
+    tipo_prenda: z
+      .string()
+      .max(40, "El tipo de prenda es muy largo")
+      .transform((v) => normalizarTipoPrenda(v)),
+    precio_venta: pesos,
+    costo: pesosOpcional,
+    stock_minimo: z
+      .string()
+      .transform((v) => (v.trim() === "" ? 0 : Number(v)))
+      .refine((v) => Number.isInteger(v) && v >= 0, "El stock mínimo no es válido"),
+    activo: z.string().optional(),
+  })
+  .refine((d) => d.rubro !== "ROPA" || d.tipo_prenda !== null, {
+    message: "Elegí qué tipo de prenda es (camiseta, short, medias…)",
+  })
+  // En el kiosco no hay tipo de prenda (la base también lo limpia).
+  .transform((d) => ({
+    ...d,
+    tipo_prenda: d.rubro === "ROPA" ? d.tipo_prenda : null,
+  }));
 
 function leerFormulario(formData: FormData) {
   return esquemaProducto.safeParse({
     nombre: String(formData.get("nombre") ?? ""),
     codigo: String(formData.get("codigo") ?? ""),
     rubro: String(formData.get("rubro") ?? ""),
+    tipo_prenda: String(formData.get("tipo_prenda") ?? ""),
     precio_venta: String(formData.get("precio_venta") ?? ""),
     costo: String(formData.get("costo") ?? ""),
     stock_minimo: String(formData.get("stock_minimo") ?? ""),
@@ -80,6 +95,7 @@ export async function crearProducto(
       nombre: datos.nombre,
       codigo: datos.codigo,
       rubro: datos.rubro,
+      tipo_prenda: datos.tipo_prenda,
       precio_venta: datos.precio_venta,
       costo: datos.costo,
       // La ropa siempre controla stock (la base también lo fuerza).
@@ -127,6 +143,7 @@ export async function editarProducto(
       nombre: datos.nombre,
       codigo: datos.codigo,
       rubro: datos.rubro,
+      tipo_prenda: datos.tipo_prenda,
       precio_venta: datos.precio_venta,
       costo: datos.costo,
       controla_stock: datos.rubro === "ROPA",
@@ -220,29 +237,140 @@ export async function agregarVariante(
   }
 
   revalidatePath(`/productos/${parseo.data.producto_id}`);
+  revalidatePath("/productos/stock");
   return {};
 }
 
-export async function actualizarStockVariante(formData: FormData) {
+/**
+ * Agrega de una todos los talles de una curva (Adulto, Niños, Medias), con
+ * stock 0. Los talles que el producto ya tiene, en cualquier color, se saltean:
+ * así apretar dos veces el mismo botón no duplica nada.
+ */
+export async function agregarCurvaTalles(
+  _previo: EstadoProducto,
+  formData: FormData,
+): Promise<EstadoProducto> {
   await exigirDueno();
 
-  const id = String(formData.get("variante_id") ?? "");
   const productoId = String(formData.get("producto_id") ?? "");
-  const stock = Number(formData.get("stock"));
+  const curva = CURVAS_TALLES.find(
+    (c) => c.id === String(formData.get("curva") ?? ""),
+  );
 
-  if (!id || !Number.isInteger(stock) || stock < 0) return;
+  if (!z.uuid().safeParse(productoId).success || !curva) {
+    return { error: "No se pudieron agregar los talles." };
+  }
 
   const supabase = await crearClienteServidor();
-  await supabase.from("variantes").update({ stock }).eq("id", id);
+
+  const { data: existentes, error: errorLectura } = await supabase
+    .from("variantes")
+    .select("talle")
+    .eq("producto_id", productoId);
+
+  if (errorLectura) return { error: mensajeDeError(errorLectura) };
+
+  const yaEstan = new Set(
+    (existentes ?? []).map((v) => String(v.talle ?? "").toUpperCase()),
+  );
+  const faltan = curva.talles.filter((t) => !yaEstan.has(t.toUpperCase()));
+
+  if (faltan.length === 0) {
+    return { aviso: `Ya estaban todos los talles ${curva.etiqueta.toLowerCase()}.` };
+  }
+
+  const { error } = await supabase.from("variantes").insert(
+    faltan.map((talle) => ({
+      producto_id: productoId,
+      talle,
+      color: null,
+      stock: 0,
+    })),
+  );
+
+  if (error) return { error: mensajeDeError(error) };
 
   await registrarAuditoria({
     tabla: "variantes",
-    registroId: id,
-    accion: "STOCK",
-    datosDespues: { stock },
+    registroId: productoId,
+    accion: "CURVA",
+    datosDespues: { curva: curva.id, talles: faltan },
   });
 
   revalidatePath(`/productos/${productoId}`);
+  revalidatePath("/productos/stock");
+  return {
+    aviso: `Se agregaron ${faltan.length} talles. Ahora completá cuántos hay de cada uno.`,
+  };
+}
+
+/**
+ * Guarda el stock de todos los talles de un producto de una sola vez.
+ * Llegan como stock:<id> (lo que quedó escrito) y antes:<id> (lo que había):
+ * solo se tocan los que cambiaron, y cada cambio queda en la auditoría.
+ */
+export async function guardarStockVariantes(
+  _previo: EstadoProducto,
+  formData: FormData,
+): Promise<EstadoProducto> {
+  await exigirDueno();
+
+  const productoId = String(formData.get("producto_id") ?? "");
+  if (!z.uuid().safeParse(productoId).success) {
+    return { error: "Falta el producto." };
+  }
+
+  const cambios: { id: string; antes: number; stock: number }[] = [];
+
+  for (const [clave, valor] of formData.entries()) {
+    if (!clave.startsWith("stock:")) continue;
+
+    const id = clave.slice("stock:".length);
+    const texto = String(valor).trim();
+    const antes = Number(formData.get(`antes:${id}`));
+    const stock = texto === "" ? 0 : Number(texto);
+
+    if (!z.uuid().safeParse(id).success) continue;
+    if (stock === antes) continue;
+
+    if (!Number.isInteger(stock) || stock < 0) {
+      return { error: "Revisá los números: el stock va sin decimales y no puede ser negativo." };
+    }
+
+    cambios.push({ id, antes, stock });
+  }
+
+  if (cambios.length === 0) return { aviso: "No había cambios para guardar." };
+
+  const supabase = await crearClienteServidor();
+
+  for (const c of cambios) {
+    const { error } = await supabase
+      .from("variantes")
+      .update({ stock: c.stock })
+      .eq("id", c.id)
+      .eq("producto_id", productoId);
+
+    if (error) return { error: mensajeDeError(error) };
+
+    await registrarAuditoria({
+      tabla: "variantes",
+      registroId: c.id,
+      accion: "STOCK",
+      datosAntes: { stock: c.antes },
+      datosDespues: { stock: c.stock },
+    });
+  }
+
+  revalidatePath(`/productos/${productoId}`);
+  revalidatePath("/productos/stock");
+  revalidatePath("/productos");
+  return {
+    aviso:
+      cambios.length === 1
+        ? "Stock guardado."
+        : `Stock guardado en ${cambios.length} talles.`,
+  };
 }
 
 export async function borrarVariante(formData: FormData) {
@@ -262,4 +390,5 @@ export async function borrarVariante(formData: FormData) {
   });
 
   revalidatePath(`/productos/${productoId}`);
+  revalidatePath("/productos/stock");
 }

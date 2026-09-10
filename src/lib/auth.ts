@@ -3,8 +3,9 @@ import "server-only";
 import { redirect } from "next/navigation";
 
 import { crearClienteServidor } from "@/lib/supabase/server";
+import { esAdmin, esDueno, type Rol } from "@/lib/roles";
 
-export type Rol = "DUENO" | "CAJERO";
+export type { Rol };
 
 export type UsuarioActual = {
   id: string;
@@ -50,11 +51,23 @@ export async function exigirUsuario(): Promise<UsuarioActual> {
   return usuario;
 }
 
-/** Exige que sea el dueño. Para configuración, usuarios y reportes sensibles. */
+/**
+ * Exige que mande: dueño o administrador.
+ * Para precios, ajustes de saldo, reabrir caja, usuarios y reportes.
+ */
 export async function exigirDueno(): Promise<UsuarioActual> {
   const usuario = await exigirUsuario();
 
-  if (usuario.rol !== "DUENO") redirect("/?error=sin-permiso");
+  if (!esDueno(usuario.rol)) redirect("/?error=sin-permiso");
+
+  return usuario;
+}
+
+/** Exige administrador. Para lo que ni el dueño puede tocar. */
+export async function exigirAdmin(): Promise<UsuarioActual> {
+  const usuario = await exigirUsuario();
+
+  if (!esAdmin(usuario.rol)) redirect("/?error=sin-permiso");
 
   return usuario;
 }

@@ -3,6 +3,7 @@ import { BarraLateral } from "@/components/barra-lateral";
 import { BarraInferior } from "@/components/barra-inferior";
 import { MenuUsuario } from "@/components/menu-usuario";
 import { EncabezadoFecha } from "@/components/encabezado-fecha";
+import { Escudo } from "@/components/escudo";
 import { SelectorTema } from "@/components/selector-tema";
 
 export default async function AppLayout({
@@ -17,8 +18,12 @@ export default async function AppLayout({
       <BarraLateral rol={usuario.rol} />
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-3 border-b border-border bg-background/95 px-4 backdrop-blur md:px-6">
-          <EncabezadoFecha />
+        <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-3 border-b border-border bg-background/95 px-4 backdrop-blur md:px-6 print:hidden">
+          <div className="flex min-w-0 items-center gap-3">
+            {/* En el celular no hay barra lateral: el escudo va acá */}
+            <Escudo alto={36} className="md:hidden" />
+            <EncabezadoFecha />
+          </div>
 
           <div className="flex items-center gap-1">
             <SelectorTema />

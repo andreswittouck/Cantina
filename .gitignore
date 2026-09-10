@@ -42,3 +42,6 @@ next-env.d.ts
 
 # pero sí queremos versionar el ejemplo
 !.env.example
+
+# lo que deja la app de Claude al compartir archivos
+/Claude outputs/

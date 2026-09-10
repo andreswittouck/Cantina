@@ -35,6 +35,16 @@ export function FormularioLogin({
 
   return (
     <form action={accion} className="flex flex-col gap-4">
+      {motivo === "registro-cerrado" && (
+        <Alert variant="info">
+          <AlertCircle />
+          <AlertDescription>
+            El sistema ya tiene usuarios. Las altas las hace un dueño o un
+            administrador desde adentro: pedile que te cree el tuyo.
+          </AlertDescription>
+        </Alert>
+      )}
+
       {motivo === "inactivo" && (
         <Alert variant="warning">
           <AlertCircle />

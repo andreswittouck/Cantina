@@ -3,7 +3,8 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, Shirt } from "lucide-react";
 
 import { exigirDueno } from "@/lib/auth";
-import { obtenerProducto } from "@/lib/productos";
+import { listarTiposPrenda, obtenerProducto } from "@/lib/productos";
+import { ordenarPorTalle } from "@/lib/talles";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FormularioProducto } from "../formulario-producto";
@@ -20,16 +21,15 @@ export default async function PaginaEditarProducto({
   await exigirDueno();
 
   const { id } = await params;
-  const producto = await obtenerProducto(id);
+  const [producto, tiposSugeridos] = await Promise.all([
+    obtenerProducto(id),
+    listarTiposPrenda(),
+  ]);
 
   if (!producto) notFound();
 
-  const variantes = [...(producto.variantes ?? [])].sort((a, b) =>
-    `${a.talle ?? ""}${a.color ?? ""}`.localeCompare(
-      `${b.talle ?? ""}${b.color ?? ""}`,
-      "es",
-    ),
-  );
+  // XS, S, M, L… en orden de talle, no alfabético (que pondría L antes de M).
+  const variantes = ordenarPorTalle(producto.variantes ?? []);
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-5">
@@ -50,11 +50,13 @@ export default async function PaginaEditarProducto({
           nombre: producto.nombre,
           codigo: producto.codigo,
           rubro: producto.rubro,
+          tipo_prenda: producto.tipo_prenda,
           precio_venta: producto.precio_venta,
           costo: producto.costo,
           stock_minimo: producto.stock_minimo,
           activo: producto.activo,
         }}
+        tiposSugeridos={tiposSugeridos}
       />
 
       {producto.rubro === "ROPA" && (
@@ -62,11 +64,11 @@ export default async function PaginaEditarProducto({
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Shirt className="size-5 text-muted-foreground" />
-              Talles y colores
+              Talles y stock
             </CardTitle>
             <p className="text-sm text-muted-foreground">
-              Cada talle lleva su propio stock. Una remera negra talle M es
-              stock distinto de la misma remera talle L.
+              Cada talle lleva su propio stock. El color es opcional: usalo
+              solo si la misma prenda viene en más de un color.
             </p>
           </CardHeader>
 

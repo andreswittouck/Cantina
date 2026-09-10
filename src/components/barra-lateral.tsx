@@ -6,18 +6,22 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { NAVEGACION } from "@/lib/navegacion";
 import { Escudo } from "@/components/escudo";
-import type { Rol } from "@/lib/auth";
+import { esAdmin, esDueno, type Rol } from "@/lib/roles";
 
 export function BarraLateral({ rol }: { rol: Rol }) {
   const ruta = usePathname();
 
-  const items = NAVEGACION.filter((i) => !i.soloDueno || rol === "DUENO");
+  // Cada uno ve solo lo que puede usar: los permisos por un lado, y lo que
+  // todavía no existe por el otro, que queda para el admin.
+  const items = NAVEGACION.filter(
+    (i) => (!i.soloDueno || esDueno(rol)) && (!i.proximamente || esAdmin(rol)),
+  );
 
   return (
     <aside className="hidden w-64 shrink-0 flex-col bg-sidebar text-sidebar-foreground md:flex">
       <div className="flex h-16 items-center gap-3 border-b border-sidebar-border px-5">
-        {/* Sobre naranja el escudo va todo negro */}
-        <Escudo className="size-8 text-marca-negro" />
+        {/* Sobre naranja el borde del escudo se funde: queda el escudo negro */}
+        <Escudo alto={44} />
         <div className="flex flex-col leading-none">
           <span className="text-base font-bold tracking-tight">La Cantina</span>
           <span className="text-[11px] font-medium tracking-wide text-sidebar-muted uppercase">

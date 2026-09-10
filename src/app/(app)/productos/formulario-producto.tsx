@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { centavosAInput } from "@/lib/money";
+import { normalizarTipoPrenda } from "@/lib/talles";
 import {
   crearProducto,
   editarProducto,
@@ -25,6 +26,7 @@ export type ProductoFormulario = {
   nombre: string;
   codigo: string | null;
   rubro: Rubro;
+  tipo_prenda: string | null;
   precio_venta: number;
   costo: number | null;
   stock_minimo: number;
@@ -60,7 +62,7 @@ function ElegirRubro({
     {
       valor: "ROPA" as const,
       etiqueta: "Ropa",
-      ayuda: "Con talles y colores",
+      ayuda: "Por tipo y talle",
       icono: Shirt,
     },
   ];
@@ -108,10 +110,74 @@ function ElegirRubro({
   );
 }
 
+/**
+ * Tipo de prenda: botones con los de siempre (y los que ya se usaron), y un
+ * campo para escribir uno nuevo. Los botones y el campo son lo mismo: tocar
+ * "Short" escribe "Short".
+ */
+function ElegirTipoPrenda({
+  inicial,
+  sugeridos,
+}: {
+  inicial: string | null;
+  sugeridos: string[];
+}) {
+  const [tipo, setTipo] = useState(inicial ?? "");
+  const elegido = normalizarTipoPrenda(tipo);
+
+  return (
+    <fieldset className="flex flex-col gap-2">
+      <legend className="mb-2 text-sm font-medium">Tipo de prenda</legend>
+
+      <div className="flex flex-wrap gap-2">
+        {sugeridos.map((s) => {
+          const activo = elegido === s;
+
+          return (
+            <button
+              key={s}
+              type="button"
+              onClick={() => setTipo(s)}
+              aria-pressed={activo}
+              className={cn(
+                "h-10 rounded-full border-2 px-4 text-sm font-medium transition-colors",
+                activo
+                  ? "border-primary bg-accent text-accent-foreground"
+                  : "border-border bg-card hover:bg-muted/60",
+              )}
+            >
+              {s}
+            </button>
+          );
+        })}
+      </div>
+
+      <Label htmlFor="tipo_prenda" className="mt-2 text-xs font-normal text-muted-foreground">
+        ¿No está en la lista? Escribilo:
+      </Label>
+      <Input
+        id="tipo_prenda"
+        name="tipo_prenda"
+        value={tipo}
+        onChange={(e) => setTipo(e.target.value)}
+        placeholder="Por ejemplo: Gorra"
+        maxLength={40}
+        autoComplete="off"
+        className="max-w-xs"
+      />
+      <p className="text-xs text-muted-foreground">
+        Sirve para ver el stock agrupado: todas las camisetas juntas, por talle.
+      </p>
+    </fieldset>
+  );
+}
+
 export function FormularioProducto({
   producto,
+  tiposSugeridos = [],
 }: {
   producto?: ProductoFormulario;
+  tiposSugeridos?: string[];
 }) {
   const nuevo = !producto;
   const accion = nuevo ? crearProducto : editarProducto;
@@ -145,6 +211,13 @@ export function FormularioProducto({
           </div>
 
           <ElegirRubro valor={rubro} alCambiar={setRubro} />
+
+          {rubro === "ROPA" && (
+            <ElegirTipoPrenda
+              inicial={producto?.tipo_prenda ?? null}
+              sugeridos={tiposSugeridos}
+            />
+          )}
 
           <div className="grid gap-5 sm:grid-cols-2">
             <div className="flex flex-col gap-2">
@@ -256,8 +329,8 @@ export function FormularioProducto({
         <Alert variant="info">
           <Shirt />
           <AlertDescription>
-            Después de guardar vas a poder cargar los talles y colores, cada uno
-            con su stock.
+            Después de guardar vas a poder cargar los talles, cada uno con su
+            stock. Hay botones para agregar todos los talles de una.
           </AlertDescription>
         </Alert>
       )}

@@ -12,7 +12,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type { Rol } from "@/lib/auth";
+import { esAdmin, esDueno, type Rol } from "@/lib/roles";
 
 const claseItem =
   "flex min-h-14 flex-col items-center justify-center gap-1 rounded-lg px-1 py-1.5 text-[11px] font-semibold transition-colors";
@@ -21,9 +21,14 @@ const claseItem =
 export function BarraInferior({ rol }: { rol: Rol }) {
   const ruta = usePathname();
 
-  const principales = NAVEGACION.filter((i) => i.enCelular);
+  const principales = NAVEGACION.filter(
+    (i) => i.enCelular && (!i.proximamente || esAdmin(rol)),
+  );
   const resto = NAVEGACION.filter(
-    (i) => !i.enCelular && (!i.soloDueno || rol === "DUENO"),
+    (i) =>
+      !i.enCelular &&
+      (!i.soloDueno || esDueno(rol)) &&
+      (!i.proximamente || esAdmin(rol)),
   );
 
   return (

@@ -13,6 +13,7 @@ import { formatearPesos } from "@/lib/money";
 import { hoyISO, formatearFecha } from "@/lib/fechas";
 import { Button } from "@/components/ui/button";
 import { BotonImprimir } from "@/components/boton-imprimir";
+import { Escudo } from "@/components/escudo";
 import { SelectorPeriodo } from "./selector-periodo";
 
 export const metadata = { title: "Resumen de cuenta" };
@@ -88,14 +89,17 @@ export default async function PaginaResumen({
       </div>
 
       <div className="rounded-xl border border-border bg-card p-6 print:border-0 print:bg-white print:p-0 print:text-black">
-        <header className="mb-5 border-b border-border pb-4">
-          <p className="text-xs font-medium tracking-widest text-marca-texto uppercase print:text-black">
-            AC RC Rugby · La Cantina
-          </p>
-          <h2 className="mt-1 text-xl font-bold">{nombreCompleto(cliente)}</h2>
-          <p className="text-sm text-muted-foreground print:text-black">
-            Movimientos del {formatearFecha(desde)} al {formatearFecha(hasta)}
-          </p>
+        <header className="mb-5 flex items-center gap-4 border-b border-border pb-4">
+          <Escudo alto={56} />
+          <div className="min-w-0">
+            <p className="text-xs font-medium tracking-widest text-marca-texto uppercase print:text-black">
+              AC RC Rugby · La Cantina
+            </p>
+            <h2 className="mt-1 text-xl font-bold">{nombreCompleto(cliente)}</h2>
+            <p className="text-sm text-muted-foreground print:text-black">
+              Movimientos del {formatearFecha(desde)} al {formatearFecha(hasta)}
+            </p>
+          </div>
         </header>
 
         <table className="w-full text-sm">

@@ -6,6 +6,7 @@ import {
   Wallet,
   Truck,
   BarChart3,
+  UserCog,
   Settings,
   type LucideIcon,
 } from "lucide-react";
@@ -14,9 +15,13 @@ export type ItemNav = {
   href: string;
   etiqueta: string;
   icono: LucideIcon;
-  /** true = la pantalla todavía no está construida (fase futura) */
+  /**
+   * true = la pantalla todavía no está construida.
+   * Solo la ve el admin: al que trabaja no le sirve un botón apagado, le
+   * ocupa lugar y lo hace dudar de si el sistema está roto.
+   */
   proximamente?: boolean;
-  /** true = solo el dueño la ve */
+  /** true = la ven el dueño y el admin, no el cajero */
   soloDueno?: boolean;
   /** true = aparece en la barra de abajo del celular */
   enCelular?: boolean;
@@ -39,6 +44,7 @@ export const NAVEGACION: ItemNav[] = [
     icono: Truck,
     proximamente: true,
   },
+  { href: "/usuarios", etiqueta: "Usuarios", icono: UserCog, soloDueno: true },
   {
     href: "/reportes",
     etiqueta: "Reportes",

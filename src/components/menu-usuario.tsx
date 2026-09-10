@@ -1,7 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
-import { ChevronDown, LogOut, ShieldCheck, User } from "lucide-react";
+import { ChevronDown, LogOut } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -14,9 +14,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cerrarSesion } from "@/app/(auth)/login/actions";
 import type { UsuarioActual } from "@/lib/auth";
+import { ROLES } from "@/lib/roles";
 
 export function MenuUsuario({ usuario }: { usuario: UsuarioActual }) {
   const [saliendo, iniciarTransicion] = useTransition();
+
+  const IconoRol = ROLES[usuario.rol].icono;
 
   const iniciales =
     usuario.nombre
@@ -50,8 +53,8 @@ export function MenuUsuario({ usuario }: { usuario: UsuarioActual }) {
         <DropdownMenuSeparator />
 
         <DropdownMenuItem disabled>
-          {usuario.rol === "DUENO" ? <ShieldCheck /> : <User />}
-          {usuario.rol === "DUENO" ? "Dueño" : "Cajero"}
+          <IconoRol />
+          {ROLES[usuario.rol].etiqueta}
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />

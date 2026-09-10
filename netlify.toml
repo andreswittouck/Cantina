@@ -1,0 +1,5 @@
+# Netlify detecta Next.js solo (usa el adaptador OpenNext) y arma el build
+# sin configuración. Acá solo se fija la versión de Node: Next.js 16 pide 20.9
+# o más nueva, y así no depende del default de Netlify.
+[build.environment]
+  NODE_VERSION = "22"

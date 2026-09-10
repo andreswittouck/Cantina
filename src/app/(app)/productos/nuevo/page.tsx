@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 import { exigirDueno } from "@/lib/auth";
+import { listarTiposPrenda } from "@/lib/productos";
 import { Button } from "@/components/ui/button";
 import { FormularioProducto } from "../formulario-producto";
 
@@ -9,6 +10,7 @@ export const metadata = { title: "Nuevo producto" };
 
 export default async function PaginaNuevoProducto() {
   await exigirDueno();
+  const tiposSugeridos = await listarTiposPrenda();
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-5">
@@ -23,7 +25,7 @@ export default async function PaginaNuevoProducto() {
         </h1>
       </div>
 
-      <FormularioProducto />
+      <FormularioProducto tiposSugeridos={tiposSugeridos} />
     </div>
   );
 }

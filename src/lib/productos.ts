@@ -1,6 +1,7 @@
 import "server-only";
 
 import { crearClienteServidor } from "@/lib/supabase/server";
+import { TIPOS_PRENDA_SUGERIDOS, normalizarTipoPrenda } from "@/lib/talles";
 
 export type Rubro = "KIOSCO" | "ROPA";
 
@@ -13,7 +14,7 @@ export const RUBROS: { valor: Rubro; etiqueta: string; ayuda: string }[] = [
   {
     valor: "ROPA",
     etiqueta: "Ropa",
-    ayuda: "Con talles y colores. Cada talle lleva su propio stock.",
+    ayuda: "Por tipo de prenda y talle. Cada talle lleva su propio stock.",
   },
 ];
 
@@ -22,6 +23,8 @@ export type Producto = {
   codigo: string | null;
   nombre: string;
   rubro: Rubro;
+  /** Solo ropa: Camiseta, Short, Medias… null en kiosco o si no se cargó. */
+  tipo_prenda: string | null;
   precio_venta: number; // centavos
   costo: number | null; // centavos
   controla_stock: boolean;
@@ -40,6 +43,9 @@ export type Variante = {
 };
 
 export type ProductoConVariantes = Producto & { variantes: Variante[] };
+
+const COLUMNAS =
+  "id, codigo, nombre, rubro, tipo_prenda, precio_venta, costo, controla_stock, stock, stock_minimo, activo, variantes(id, producto_id, talle, color, stock, activo)";
 
 /** Quita acentos y pasa a minúsculas, igual que el trigger de la base. */
 function normalizar(texto: string): string {
@@ -65,9 +71,7 @@ export async function listarProductos(
 
   let consulta = supabase
     .from("productos")
-    .select(
-      "id, codigo, nombre, rubro, precio_venta, costo, controla_stock, stock, stock_minimo, activo, variantes(id, producto_id, talle, color, stock, activo)",
-    )
+    .select(COLUMNAS)
     .order("rubro", { ascending: true })
     .order("nombre", { ascending: true });
 
@@ -97,9 +101,7 @@ export async function obtenerProducto(
 
   const { data } = await supabase
     .from("productos")
-    .select(
-      "id, codigo, nombre, rubro, precio_venta, costo, controla_stock, stock, stock_minimo, activo, variantes(id, producto_id, talle, color, stock, activo)",
-    )
+    .select(COLUMNAS)
     .eq("id", id)
     .maybeSingle();
 
@@ -125,4 +127,26 @@ export function describirVariante(v: Variante): string {
   ].filter(Boolean);
 
   return partes.length ? partes.join(" · ") : "Único";
+}
+
+/**
+ * Tipos de prenda para ofrecer al cargar ropa: los de siempre más los que ya
+ * se usaron, sin repetir y en orden alfabético.
+ */
+export async function listarTiposPrenda(): Promise<string[]> {
+  const supabase = await crearClienteServidor();
+
+  const { data } = await supabase
+    .from("productos")
+    .select("tipo_prenda")
+    .eq("rubro", "ROPA")
+    .not("tipo_prenda", "is", null);
+
+  const tipos = new Set<string>(TIPOS_PRENDA_SUGERIDOS);
+  for (const fila of data ?? []) {
+    const tipo = normalizarTipoPrenda(fila.tipo_prenda as string | null);
+    if (tipo) tipos.add(tipo);
+  }
+
+  return [...tipos].sort((a, b) => a.localeCompare(b, "es"));
 }

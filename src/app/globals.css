@@ -6,14 +6,14 @@
 /* ===========================================================================
    PALETA DEL CLUB — AC RC Rugby
    ---------------------------------------------------------------------------
-   Naranja del escudo   #EA6A24
+   Naranja del escudo   #FA6F18   (sacado del logo: el fondo de marca/logo-fondo-naranja.png)
    Negro del escudo     #0D0D0D
    Blanco               #FFFFFF
 
    Decisión de contraste (importante, no tocar a la ligera):
-   El naranja del club es claro. Texto BLANCO sobre ese naranja da 3.19:1,
+   El naranja del club es claro. Texto BLANCO sobre ese naranja da 2.86:1,
    que no llega al mínimo legible (4.5:1). Texto NEGRO sobre el mismo naranja
-   da 6.09:1 y además es exactamente la combinación del escudo.
+   da 6.8:1 y además es exactamente la combinación del escudo.
      → Botones naranjas = texto negro.
      → Para TEXTO naranja sobre fondo claro (links, montos) se usa una versión
        más oscura, --marca-texto (#B84A0C, 5.22:1). El naranja puro como texto
@@ -24,7 +24,7 @@
   --radius: 0.75rem;
 
   /* Colores de marca en crudo */
-  --marca: oklch(0.671 0.176 45);          /* #EA6A24 naranja del escudo */
+  --marca: oklch(0.701 0.19 45.7);         /* #FA6F18 naranja del escudo */
   --marca-texto: oklch(0.55 0.155 44);     /* #B84A0C para texto sobre claro */
   --marca-negro: oklch(0.159 0 0);         /* #0D0D0D negro del escudo */
 
@@ -37,7 +37,7 @@
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.2 0.008 55);
 
-  --primary: oklch(0.671 0.176 45);
+  --primary: oklch(0.701 0.19 45.7);
   --primary-foreground: oklch(0.159 0 0);
 
   --secondary: oklch(0.962 0.005 65);
@@ -63,12 +63,12 @@
 
   --border: oklch(0.9 0.006 65);
   --input: oklch(0.9 0.006 65);
-  --ring: oklch(0.671 0.176 45);
+  --ring: oklch(0.701 0.19 45.7);
 
   /* La barra de navegación va NARANJA: es el color que más usa el club.
-     Texto negro encima (6.09:1). El ítem activo se invierte a negro, igual
+     Texto negro encima (6.8:1). El ítem activo se invierte a negro, igual
      que el interior del escudo. */
-  --sidebar: oklch(0.671 0.176 45);
+  --sidebar: oklch(0.701 0.19 45.7);
   --sidebar-foreground: oklch(0.159 0 0);
   --sidebar-muted: oklch(0.159 0 0 / 80%);
   --sidebar-border: oklch(0.159 0 0 / 16%);
@@ -77,7 +77,7 @@
 }
 
 .dark {
-  --marca: oklch(0.7 0.175 46);
+  --marca: oklch(0.73 0.18 46.5);
   --marca-texto: oklch(0.79 0.15 52);
   --marca-negro: oklch(0.159 0 0);
 
@@ -90,7 +90,7 @@
   --popover: oklch(0.218 0.006 65);
   --popover-foreground: oklch(0.955 0.004 65);
 
-  --primary: oklch(0.7 0.175 46);
+  --primary: oklch(0.73 0.18 46.5);
   --primary-foreground: oklch(0.16 0.02 46);
 
   --secondary: oklch(0.275 0.007 65);
@@ -113,11 +113,11 @@
 
   --border: oklch(1 0 0 / 13%);
   --input: oklch(1 0 0 / 17%);
-  --ring: oklch(0.7 0.175 46);
+  --ring: oklch(0.73 0.18 46.5);
 
   /* De noche el naranja pleno encandila: se baja un punto la luminosidad
      sin perder el tono de marca. */
-  --sidebar: oklch(0.615 0.168 45);
+  --sidebar: oklch(0.645 0.18 45.5);
   --sidebar-foreground: oklch(0.13 0 0);
   --sidebar-muted: oklch(0.13 0 0 / 82%);
   --sidebar-border: oklch(0.13 0 0 / 18%);
@@ -203,8 +203,11 @@
     background: #fff;
   }
 
+  /* Solo la navegación del sistema. No va "header" suelto: se llevaba
+     también el encabezado del ticket, de la lista de precios y del resumen
+     de cuenta (nombre del club, título y fecha). El encabezado de arriba de
+     todo se esconde con print:hidden en el layout. */
   aside,
-  header,
   nav {
     display: none !important;
   }

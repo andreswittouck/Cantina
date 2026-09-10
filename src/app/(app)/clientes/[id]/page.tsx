@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 
 import { exigirUsuario } from "@/lib/auth";
+import { esDueno } from "@/lib/roles";
 import {
   obtenerCliente,
   listarMovimientos,
@@ -150,7 +151,7 @@ export default async function PaginaCliente({
       <AccionesCuenta
         clienteId={id}
         hoy={hoyISO()}
-        esDueno={usuario.rol === "DUENO"}
+        esDueno={esDueno(usuario.rol)}
       />
 
       <div className="flex flex-col gap-3">

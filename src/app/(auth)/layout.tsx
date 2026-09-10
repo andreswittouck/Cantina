@@ -15,7 +15,7 @@ export default function AuthLayout({
       <div className="w-full max-w-sm">
         <div className="mb-8 flex flex-col items-center gap-4 text-center">
           {/* Sobre fondo claro u oscuro, el borde naranja siempre resalta */}
-          <Escudo className="size-20 text-marca" />
+          <Escudo alto={128} />
           <div>
             <h1 className="text-2xl font-bold tracking-tight">La Cantina</h1>
             <p className="text-sm font-medium tracking-wide text-marca-texto uppercase">

@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { crearClienteServidor } from "@/lib/supabase/server";
+import { hayUsuarios } from "@/lib/usuarios";
 
 export type EstadoFormulario = { error?: string };
 
@@ -53,10 +54,23 @@ const esquemaRegistro = z
     path: ["password2"],
   });
 
+/**
+ * Alta del primer usuario, y de nadie más. La página ya redirige, pero el
+ * chequeo se repite acá porque una Server Action se puede llamar de afuera.
+ * La barrera final igual está en la base: el trigger de alta rechaza a
+ * cualquiera que no tenga una invitación esperándolo.
+ */
 export async function registrarse(
   _estadoPrevio: EstadoFormulario,
   formData: FormData,
 ): Promise<EstadoFormulario> {
+  if (await hayUsuarios()) {
+    return {
+      error:
+        "El sistema ya tiene usuarios. Pedile a un dueño o a un administrador que te cree el tuyo.",
+    };
+  }
+
   const parseo = esquemaRegistro.safeParse({
     nombre: String(formData.get("nombre") ?? "").trim(),
     email: String(formData.get("email") ?? "").trim(),

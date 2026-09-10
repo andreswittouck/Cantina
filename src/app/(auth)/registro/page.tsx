@@ -1,21 +1,31 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { Info } from "lucide-react";
 
+import { hayUsuarios } from "@/lib/usuarios";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent } from "@/components/ui/card";
 import { FormularioRegistro } from "./formulario-registro";
 
 export const metadata = { title: "Crear cuenta · La Cantina" };
 
-export default function PaginaRegistro() {
+/**
+ * Esta pantalla existe solo para arrancar: es la forma de crear al primero,
+ * cuando todavía no hay nadie que pueda darlo de alta. Apenas existe un
+ * usuario, se cierra. De ahí en más las altas se hacen desde /usuarios.
+ */
+export default async function PaginaRegistro() {
+  if (await hayUsuarios()) redirect("/login?motivo=registro-cerrado");
+
   return (
     <Card>
       <CardContent className="flex flex-col gap-4">
         <Alert variant="info">
           <Info />
           <AlertDescription>
-            El <strong>primer</strong> usuario que se cree queda como dueño, con
-            todos los permisos. Los que vengan después entran como cajeros.
+            Estás creando el <strong>primer</strong> usuario: queda como
+            administrador, con todos los permisos. De acá en más, los demás
+            usuarios los da de alta él desde el sistema.
           </AlertDescription>
         </Alert>
 

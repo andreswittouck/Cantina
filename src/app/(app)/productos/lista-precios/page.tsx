@@ -7,6 +7,7 @@ import { formatearPesosCorto } from "@/lib/money";
 import { hoyISO, formatearFecha } from "@/lib/fechas";
 import { Button } from "@/components/ui/button";
 import { BotonImprimir } from "@/components/boton-imprimir";
+import { Escudo } from "@/components/escudo";
 
 export const metadata = { title: "Lista de precios" };
 
@@ -42,6 +43,7 @@ export default async function PaginaListaPrecios() {
 
       <div className="rounded-xl border border-border bg-card p-6 print:border-0 print:bg-white print:p-0 print:text-black">
         <header className="mb-6 border-b border-border pb-4 text-center">
+          <Escudo alto={64} className="mx-auto mb-2" />
           <p className="text-xs font-medium tracking-widest text-marca-texto uppercase print:text-black">
             AC RC Rugby
           </p>

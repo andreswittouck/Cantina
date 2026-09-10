@@ -25,6 +25,8 @@ En Supabase, andá a **SQL Editor** → **New query**, y corré los archivos de
 3. `0003_clientes_cuenta_corriente.sql`
 4. `0004_ventas_y_forma_de_pago.sql`
 5. `0005_caja_y_arqueo.sql`
+6. `0006_roles_y_alta_de_usuarios.sql`
+7. `0007_tipo_de_prenda.sql`
 
 Cada archivo se puede correr más de una vez sin romper nada, así que si dudás
 de cuál corriste, corrélos todos de nuevo.
@@ -45,6 +47,12 @@ Los valores salen de Supabase → **Project Settings** → **API**:
 | --- | --- |
 | `NEXT_PUBLIC_SUPABASE_URL` | *Project URL* |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | *anon / publishable key* |
+| `SUPABASE_SERVICE_ROLE_KEY` | *service_role key* — **secreta** |
+
+La `service_role` se usa para una sola cosa: crear el login cuando alguien da
+de alta a un usuario desde el sistema. Va solo en el servidor, nunca con
+prefijo `NEXT_PUBLIC_` y nunca en el repositorio. Sin ella, todo lo demás
+anda, pero no se pueden dar de alta usuarios.
 
 ### 4. Correrlo
 
@@ -57,13 +65,17 @@ Abrí <http://localhost:3000>. Te va a mandar al login.
 
 ### 5. Crear el primer usuario
 
-Entrá a `/registro`. **El primer usuario que se cree queda como dueño**, con
-todos los permisos. Los que vengan después entran como cajeros.
+Entrá a `/registro`. **El primer usuario queda como administrador**, con todos
+los permisos.
 
-> Una vez creados los usuarios que necesitás, conviene **apagar el registro
-> abierto** en Supabase → *Authentication* → *Sign In / Providers* →
-> desactivar *Allow new users to sign up*. A partir de ahí, los usuarios los
-> da de alta el dueño.
+Esa pantalla existe solo para arrancar: apenas hay un usuario, se cierra sola
+y manda al login. De ahí en más, las altas se hacen desde **Usuarios**, y las
+hace un dueño o un administrador eligiendo el rol de cada uno.
+
+> Conviene además **apagar el registro abierto** en Supabase →
+> *Authentication* → *Sign In / Providers* → desactivar *Allow new users to
+> sign up*. La base ya rechaza a cualquiera que se quiera registrar solo, pero
+> es una traba menos que depender de una sola.
 
 ---
 
@@ -76,11 +88,17 @@ sobre los planes gratuitos.
 
 ---
 
-## Publicarlo en Vercel (gratis)
+## Publicarlo en Netlify (gratis)
+
+Se usa Netlify y no Vercel porque el plan gratis de Vercel es solo para uso
+personal no comercial, y el de Netlify permite uso comercial. Los pasos
+completos están en [`PUESTA-EN-MARCHA.md`](PUESTA-EN-MARCHA.md), parte 2. En corto:
 
 1. Subí el repo a GitHub.
-2. En [vercel.com](https://vercel.com) → **Add New… → Project** → importá el repo.
-3. En **Environment Variables** cargá las dos variables del `.env.local`.
+2. En [app.netlify.com](https://app.netlify.com) → **Add new project → Import
+   an existing project** → GitHub → elegí el repo. Netlify detecta Next.js
+   solo; `netlify.toml` fija la versión de Node.
+3. Cargá las tres variables de entorno del `.env.example`.
 4. **Deploy**.
 
 Cada `git push` a `main` republica solo.
@@ -182,21 +200,38 @@ los no anulados. La pantalla siempre muestra números positivos.
 
 ## Quién puede hacer qué
 
-| | Dueño | Cajero |
-| --- | :---: | :---: |
-| Ver productos y precios | ✅ | ✅ |
-| Cargar y editar productos | ✅ | ❌ |
-| Cambiar precios | ✅ | ❌ |
-| Imprimir la lista de precios | ✅ | ✅ |
-| Ver la auditoría | ✅ | ❌ |
-| Cargar clientes | ✅ | ✅ |
-| Cargar consumos y pagos | ✅ | ✅ |
-| Ajustar un saldo a mano | ✅ | ❌ |
-| Anular un movimiento | cualquiera | solo los suyos, el mismo día |
-| Cargar ventas | ✅ | ✅ |
-| Anular una venta | cualquiera | solo las suyas, el mismo día |
-| Abrir y cerrar la caja | ✅ | ✅ |
-| Reabrir una caja cerrada | ✅ | ❌ |
+Hay tres roles, de mayor a menor: **administrador**, **dueño** y **cajero**.
+El administrador puede todo lo del dueño, y además es el único que puede hacer
+otros administradores.
+
+| | Admin | Dueño | Cajero |
+| --- | :---: | :---: | :---: |
+| Ver productos y precios | ✅ | ✅ | ✅ |
+| Cargar y editar productos | ✅ | ✅ | ❌ |
+| Cambiar precios | ✅ | ✅ | ❌ |
+| Imprimir la lista de precios | ✅ | ✅ | ✅ |
+| Ver la auditoría | ✅ | ✅ | ❌ |
+| Cargar clientes | ✅ | ✅ | ✅ |
+| Cargar consumos y pagos | ✅ | ✅ | ✅ |
+| Ajustar un saldo a mano | ✅ | ✅ | ❌ |
+| Anular un movimiento | cualquiera | cualquiera | solo los suyos, el mismo día |
+| Cargar ventas | ✅ | ✅ | ✅ |
+| Anular una venta | cualquiera | cualquiera | solo las suyas, el mismo día |
+| Abrir y cerrar la caja | ✅ | ✅ | ✅ |
+| Reabrir una caja cerrada | ✅ | ✅ | ❌ |
+| Dar de alta usuarios | ✅ | ✅ | ❌ |
+| Dar el rol de administrador | ✅ | ❌ | ❌ |
+| Sacar o devolver el acceso | ✅ | solo a dueños y cajeros | ❌ |
+| Ver lo que todavía falta construir | ✅ | ❌ | ❌ |
+
+Dos reglas que valen para todos: **nadie se cambia el rol a sí mismo** ni se
+saca el acceso solo, y **nadie toca a alguien con más permisos que él**. Las
+dos las hace cumplir la base, no la pantalla.
+
+Las pantallas que todavía no existen (Proveedores, Reportes, Configuración) y
+la lista de etapas del inicio **solo las ve el admin**. Al que atiende la
+cantina un botón apagado no le sirve: le ocupa lugar y lo hace dudar de si el
+sistema anda. Se marcan con `proximamente: true` en `src/lib/navegacion.ts`.
 
 Los precios son decisión del dueño. Si querés que los cajeros también puedan
 cargar productos, cambiá `public.es_dueno()` por `public.usuario_activo()` en
@@ -238,8 +273,22 @@ Los permisos se chequean en **tres capas**, a propósito:
    base no le devuelve nada que no le corresponda.
 
 La clave `anon` es pública por diseño y va al navegador: lo que protege los
-datos es RLS, no esconder esa clave. La `service_role` **no se usa en este
-proyecto** y nunca debe ir en una variable `NEXT_PUBLIC_`.
+datos es RLS, no esconder esa clave. La `service_role` sí es secreta, vive solo
+en el servidor y nunca va en una variable `NEXT_PUBLIC_`.
+
+### El alta de usuarios
+
+Nadie se registra solo: el trigger que crea el perfil rechaza a cualquiera que
+no tenga una invitación esperándolo. Y el rol **no** viaja en los metadatos del
+registro, porque cualquiera con la clave pública puede mandar los metadatos que
+quiera y se haría administrador solo. En vez de eso, el alta va en dos pasos:
+
+1. El dueño o el admin **reserva** el rol en `altas_pendientes`, con su propia
+   sesión. Ahí RLS revisa de verdad si puede dar ese rol.
+2. Recién entonces el servidor crea el login, y el trigger de la base lee el
+   rol reservado.
+
+Las pruebas de todo esto están en `supabase/pruebas/`.
 
 ---
 

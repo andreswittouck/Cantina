@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 
 import { exigirUsuario } from "@/lib/auth";
+import { esDueno } from "@/lib/roles";
 import {
   obtenerCajaPorFecha,
   obtenerResumen,
@@ -192,7 +193,7 @@ export default async function PaginaCaja({
                 <strong>{formatearPesosCorto(resumen.esperado_efectivo)}</strong>{" "}
                 y el arqueo se hizo contra{" "}
                 <strong>{formatearPesosCorto(caja.monto_sistema ?? 0)}</strong>.
-                {usuario.rol === "DUENO"
+                {esDueno(usuario.rol)
                   ? " Podés reabrir la caja y volver a contar."
                   : " Avisale al dueño para que la reabra."}
               </AlertDescription>
@@ -301,7 +302,7 @@ export default async function PaginaCaja({
                   )}
                 </div>
 
-                {usuario.rol === "DUENO" && (
+                {esDueno(usuario.rol) && (
                   <ReabrirCaja cajaId={caja.id} fecha={fecha} />
                 )}
               </CardContent>
