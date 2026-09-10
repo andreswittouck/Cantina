@@ -11,7 +11,8 @@ en el README, sección *Cómo arrancarlo*.
 
 **2. Datos de prueba.** Entrá a `/registro` y creá tu usuario (queda
 administrador; después esa pantalla se cierra sola).
-Después, en el SQL Editor de Supabase, corré:
+Después, copiá el **contenido** de este archivo y corrélo en el SQL Editor de
+Supabase (en la Mac: `pbcopy < supabase/datos-de-prueba.sql` y pegar):
 
 ```
 supabase/datos-de-prueba.sql
@@ -60,9 +61,11 @@ Borra todo lo transaccional pero **no** los usuarios.
 
 Se publica en **Netlify**, plan gratis (ver parte 4 por qué no Vercel).
 
-1. **Base al día.** En Supabase → *SQL Editor*, pegá entero
-   `supabase/aplicar-todas-las-migraciones.sql` y corrélo. Se puede correr
-   aunque ya hayas corrido algunas: lo que ya está, lo saltea.
+1. **Base al día.** Abrí el archivo `supabase/aplicar-todas-las-migraciones.sql`,
+   copiá **todo su contenido** (no el nombre del archivo) y pegalo en
+   Supabase → *SQL Editor* → *Run*. En la Mac, esto lo deja copiado:
+   `pbcopy < supabase/aplicar-todas-las-migraciones.sql`.
+   Se puede correr aunque ya hayas corrido algunas: lo que ya está, lo saltea.
 2. **Subí el repo a GitHub** (`git push`).
 3. **Netlify:** [app.netlify.com](https://app.netlify.com) → *Add new project*
    → *Import an existing project* → GitHub → elegí el repo. Netlify detecta
